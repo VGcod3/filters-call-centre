@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { DateRange } from "react-day-picker";
-import { PresetDates } from "./typesDatePicker";
+
 import { useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import { searchParamsSchema } from "~/routes/reports";
+
+export enum PresetDates {
+  "1H" = "Last hour",
+  "Today" = "Today",
+  "Yesterday" = "Yesterday",
+  "7D" = "Last 7 days",
+  "14D" = "Last 14 days",
+  "30D" = "Last 30 days",
+}
 
 type Presets = {
   [key in keyof typeof PresetDates]: DateRange;
@@ -44,8 +53,9 @@ const dateOptions = Object.entries(PresetDates).map(([key, value]) => ({
 const useDatePicker = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [showTime, setShowTime] = useState(false);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const parsedSearchParams = searchParamsSchema.parse(
     Object.fromEntries(searchParams.entries())
@@ -55,6 +65,8 @@ const useDatePicker = () => {
     "statsPeriod" in parsedSearchParams
       ? presets[parsedSearchParams.statsPeriod]
       : parsedSearchParams;
+
+  const [calendarState, setCalendarState] = useState<DateRange>(fromTo);
 
   const getButtonDisplaytext = () => {
     if (searchParams.has("statsPeriod")) {
@@ -90,10 +102,35 @@ const useDatePicker = () => {
     setCalendarOpen(!calendarOpen);
   };
 
-  useEffect(() => {
-    console.log("calendarOpen", calendarOpen);
-    console.log("dropdownOpen", dropdownOpen);
-  }, [calendarOpen, dropdownOpen]);
+  const handleApplyButton = () => {
+    setSearchParams((prev) => {
+      prev.delete("statsPeriod");
+
+      prev.set("from", calendarState?.from?.toISOString() || "");
+      prev.set("to", calendarState?.to?.toISOString() || "");
+
+      return prev;
+    });
+
+    toggleCaledarOpen();
+  };
+
+  const handleBackButton = () => {
+    console.log("handleBackButton");
+
+    setCalendarState(fromTo);
+
+    toggleCaledarOpen();
+    toggleDropdown();
+  };
+
+  const handleClearDate = () => {
+    setCalendarState(fromTo);
+  };
+
+  const handleShowTime = () => {
+    setShowTime((prev) => !prev);
+  };
 
   return {
     fromTo,
@@ -104,6 +141,17 @@ const useDatePicker = () => {
     setDropdownOpen,
     calendarOpen,
     setCalendarOpen,
+
+    calendarState,
+    setCalendarState,
+
+    showTime,
+    setShowTime,
+
+    handleApplyButton,
+    handleBackButton,
+    handleClearDate,
+    handleShowTime,
 
     toggleCaledarOpen,
     toggleDropdown,

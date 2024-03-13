@@ -1,10 +1,10 @@
 import { ChevronLeftIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { useCalendarView } from "./useCalendarView";
+import useDatePicker from "./useDatePicker";
 
 export const BottomBar = () => {
   const { handleBackButton, handleApplyButton, calendarState } =
-    useCalendarView();
+    useDatePicker();
 
   return (
     <div className="flex p-3 gap-3 text-gray-600">

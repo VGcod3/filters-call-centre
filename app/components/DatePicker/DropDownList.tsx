@@ -11,6 +11,17 @@ export const DropDownList = () => {
 
   const { dateOptions, setCalendarOpen } = useDatePicker();
 
+  const onCheckedChange = (opt: string) => {
+    setSearchParams((prev) => {
+      prev.delete("from");
+      prev.delete("to");
+
+      prev.set("statsPeriod", opt);
+
+      return prev;
+    });
+  };
+
   return (
     <DropdownMenuContent className="w-56" align="start">
       {dateOptions.map((opt) => (
@@ -21,16 +32,7 @@ export const DropDownList = () => {
             searchParams.has("statsPeriod") &&
             searchParams.get("statsPeriod") === opt.value
           }
-          onCheckedChange={() => {
-            setSearchParams((prev) => {
-              prev.delete("from");
-              prev.delete("to");
-
-              prev.set("statsPeriod", opt.value);
-
-              return prev;
-            });
-          }}
+          onCheckedChange={() => onCheckedChange(opt.value)}
         >
           <span className="text-gray-700">{opt.label}</span>
         </DropdownMenuCheckboxItem>

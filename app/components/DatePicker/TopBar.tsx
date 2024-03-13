@@ -1,13 +1,13 @@
 import { CalendarX2Icon, ClockIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { format } from "date-fns";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
-import type { TopBarProps } from "./typesDatePicker";
-import { useCalendarView } from "./useCalendarView";
 
-export const TopBar = ({ date, handleClearDate }: TopBarProps) => {
-  const { showTime, handleShowTime } = useCalendarView();
+import useDatePicker from "./useDatePicker";
+import dayjs from "dayjs";
+
+export const TopBar = () => {
+  const { fromTo, showTime, handleShowTime, handleClearDate } = useDatePicker();
 
   return (
     <div className="flex gap-3 p-3 text-gray-600">
@@ -20,8 +20,8 @@ export const TopBar = ({ date, handleClearDate }: TopBarProps) => {
           variant={"outline"}
           className={cn(showTime && "border-b-0 rounded-b-none")}
         >
-          {date?.from ? (
-            format(date.from, "LLL dd, y")
+          {fromTo.from ? (
+            dayjs(fromTo.from).format("MMM DD, YYYY")
           ) : (
             <span>Pick a date</span>
           )}
@@ -46,7 +46,11 @@ export const TopBar = ({ date, handleClearDate }: TopBarProps) => {
           variant={"outline"}
           className={cn(showTime && "border-b-0 rounded-b-none")}
         >
-          {date?.to ? format(date.to, "LLL dd, y") : <span>Pick a date</span>}
+          {fromTo?.to ? (
+            dayjs(fromTo.to).format("MMM DD, YYYY")
+          ) : (
+            <span>Pick a date</span>
+          )}
         </Button>
 
         {showTime && (

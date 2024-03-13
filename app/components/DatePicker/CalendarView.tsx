@@ -4,19 +4,14 @@ import { Separator } from "~/components/ui/separator";
 import { TopBar } from "./TopBar";
 import { BottomBar } from "./BottomBar";
 import type { DateRange } from "react-day-picker";
-import { useCalendarView } from "./useCalendarView";
+import useDatePicker from "./useDatePicker";
 
 export const CalendarView = () => {
-  const {
-    calendarState,
-    setCalendarState,
-
-    handleClearDate,
-  } = useCalendarView();
+  const { calendarState, setCalendarState } = useDatePicker();
 
   return (
     <PopoverContent className="w-auto p-0" align="start">
-      <TopBar date={calendarState} handleClearDate={handleClearDate} />
+      <TopBar />
 
       <Separator />
 
