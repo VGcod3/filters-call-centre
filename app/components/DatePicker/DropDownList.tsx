@@ -1,28 +1,36 @@
+import { useSearchParams } from "@remix-run/react";
 import { ChevronRightIcon } from "lucide-react";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
 } from "~/components/ui/dropdown-menu";
+import useDatePicker from "./useDatePicker";
 
-export const DropDownList = ({
-  dateOptions,
-  activeDateFilter,
-  setActiveDateFilter,
-  setCalendarOpen,
-}: {
-  dateOptions: { label: string; value: string }[];
-  activeDateFilter: string;
-  setActiveDateFilter: (value: string) => void;
-  setCalendarOpen: (value: boolean) => void;
-}) => {
+export const DropDownList = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { dateOptions, setCalendarOpen } = useDatePicker();
+
   return (
     <DropdownMenuContent className="w-56" align="start">
       {dateOptions.map((opt) => (
         <DropdownMenuCheckboxItem
           className="text-blue-600"
           key={opt.value}
-          checked={activeDateFilter === opt.value}
-          onCheckedChange={() => setActiveDateFilter(opt.value)}
+          checked={
+            searchParams.has("statsPeriod") &&
+            searchParams.get("statsPeriod") === opt.value
+          }
+          onCheckedChange={() => {
+            setSearchParams((prev) => {
+              prev.delete("from");
+              prev.delete("to");
+
+              prev.set("statsPeriod", opt.value);
+
+              return prev;
+            });
+          }}
         >
           <span className="text-gray-700">{opt.label}</span>
         </DropdownMenuCheckboxItem>
@@ -31,13 +39,10 @@ export const DropDownList = ({
       <DropdownMenuCheckboxItem
         className="text-blue-600"
         key={"Custom"}
-        checked={activeDateFilter === "Custom"}
-        onCheckedChange={() => setActiveDateFilter("Custom")}
-        onClick={() => {
-          setCalendarOpen(true);
-        }}
+        checked={searchParams.has("from") && searchParams.has("to")}
+        onClick={() => setCalendarOpen(true)}
       >
-        <span className="text-gray-700 flex w-full justify-between">
+        <span className="text-gray-700 flex w-full justify-between items-center">
           Custom
           <ChevronRightIcon strokeWidth={1.5} className="p-1" />
         </span>

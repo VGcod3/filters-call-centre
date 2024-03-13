@@ -1,5 +1,9 @@
 import type { MetaFunction } from "@remix-run/node";
-import DatePicker from "~/components/DatePicker";
+import { Link } from "@remix-run/react";
+import { PhoneCallIcon } from "lucide-react";
+import { PropsWithChildren } from "react";
+import { Button, ButtonProps } from "~/components/ui/button";
+import { cn } from "~/lib/utils";
 
 export const meta: MetaFunction = () => {
   return [
@@ -8,10 +12,29 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+interface RoundButtonProps extends PropsWithChildren, ButtonProps {}
+
+const RoundButton = ({ children, className, ...props }: RoundButtonProps) => {
+  return (
+    <Button className={cn("rounded-full h-16 w-16 p-2", className)} {...props}>
+      {children}
+    </Button>
+  );
+};
+
 export default function Index() {
   return (
-    <div className="bg-gray-200 flex h-screen w-full justify-start items-start p-5">
-      <DatePicker />
+    <div className="bg-gray-200 flex flex-col gap-5 h-screen w-full justify-start items-start p-5">
+      <Link prefetch="intent" to={"/reports"}>
+        go to reports
+      </Link>
+
+      <RoundButton className="bg-black">
+        <PhoneCallIcon />
+      </RoundButton>
+      <RoundButton variant={"ghost"}>
+        <PhoneCallIcon />
+      </RoundButton>
     </div>
   );
 }

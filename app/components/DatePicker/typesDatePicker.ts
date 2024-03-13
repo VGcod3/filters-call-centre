@@ -10,8 +10,7 @@ export enum PresetDates {
 }
 
 export interface BottomBarProps {
-  setCalendarOpen: (value: boolean) => void;
-  setDropdownOpen: (value: boolean) => void;
+  handleBackButton: () => void;
   handleApplyButton: () => void;
   date: DateRange | undefined;
 }

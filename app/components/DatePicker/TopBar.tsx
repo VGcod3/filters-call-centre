@@ -1,17 +1,13 @@
-import { useState } from "react";
 import { CalendarX2Icon, ClockIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { format } from "date-fns";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
 import type { TopBarProps } from "./typesDatePicker";
+import { useCalendarView } from "./useCalendarView";
 
 export const TopBar = ({ date, handleClearDate }: TopBarProps) => {
-  const [showTime, setShowTime] = useState(false);
-
-  const handleShowTime = () => {
-    setShowTime((prev) => !prev);
-  };
+  const { showTime, handleShowTime } = useCalendarView();
 
   return (
     <div className="flex gap-3 p-3 text-gray-600">

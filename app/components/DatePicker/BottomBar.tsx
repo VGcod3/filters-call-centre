@@ -1,30 +1,25 @@
 import { ChevronLeftIcon } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import type { BottomBarProps } from "./typesDatePicker";
+import { useCalendarView } from "./useCalendarView";
 
-export const BottomBar = ({
-  setCalendarOpen,
-  setDropdownOpen,
-  handleApplyButton,
-  date,
-}: BottomBarProps) => {
+export const BottomBar = () => {
+  const { handleBackButton, handleApplyButton, calendarState } =
+    useCalendarView();
+
   return (
     <div className="flex p-3 gap-3 text-gray-600">
       <Button
         variant={"outline"}
         className="flex-1 flex gap-4"
-        onClick={() => {
-          setCalendarOpen(false);
-          setDropdownOpen(true);
-        }}
+        onClick={handleBackButton}
       >
         <ChevronLeftIcon strokeWidth={1.5} />
         Back
       </Button>
       <Button
-        disabled={!date?.from || !date?.to}
+        disabled={!calendarState?.from || !calendarState?.to}
         className="flex-1"
-        onClick={() => handleApplyButton()}
+        onClick={handleApplyButton}
       >
         Apply
       </Button>
