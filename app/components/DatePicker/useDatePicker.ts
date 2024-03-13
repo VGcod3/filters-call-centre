@@ -4,6 +4,7 @@ import type { DateRange } from "react-day-picker";
 import { useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import { searchParamsSchema } from "~/routes/reports";
+import { DatePickerContextProps } from "./DatePickerContext";
 
 export enum PresetDates {
   "1H" = "Last hour",
@@ -50,11 +51,7 @@ const dateOptions = Object.entries(PresetDates).map(([key, value]) => ({
   value: key,
 }));
 
-const useDatePicker = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
-  const [showTime, setShowTime] = useState(false);
-
+const useDatePicker = (): DatePickerContextProps => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const parsedSearchParams = searchParamsSchema.parse(
@@ -66,8 +63,6 @@ const useDatePicker = () => {
       ? presets[parsedSearchParams.statsPeriod]
       : parsedSearchParams;
 
-  const [calendarState, setCalendarState] = useState<DateRange>(fromTo);
-
   const getButtonDisplaytext = () => {
     if (searchParams.has("statsPeriod")) {
       return PresetDates[
@@ -75,31 +70,34 @@ const useDatePicker = () => {
       ];
     }
 
-    if (fromTo.from && fromTo.to) {
-      const from = dayjs(fromTo.from).format("MMM DD, YYYY");
+    const from = dayjs(fromTo.from).format("MMM DD, YYYY");
+    const to = dayjs(fromTo.to).format("MMM DD, YYYY");
 
-      const to = dayjs(fromTo.to).format("MMM DD, YYYY");
+    if (from === to) {
+      return from;
+    }
 
-      if (from === to) {
-        return from;
-      }
+    return `${from} - ${to}`;
+  };
 
-      return `${from} - ${to}`;
+  const [calendarState, setCalendarState] = useState<DateRange>(fromTo);
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [showTime, setShowTime] = useState(false);
+
+  const handleDropdown = (state: boolean) => {
+    setDropdownOpen(state);
+
+    if (state && calendarOpen) {
+      setCalendarOpen(false);
     }
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen((prev) => !prev);
+  const toggleCalendar = () => {
+    setCalendarOpen((prev) => !prev);
 
-    // if (dropdownOpen && calendarOpen) {
-    //   setCalendarOpen(false);
-    // }
-  };
-
-  const toggleCaledarOpen = () => {
-    // setDropdownOpen(false);
-
-    setCalendarOpen(!calendarOpen);
+    setCalendarState(fromTo);
   };
 
   const handleApplyButton = () => {
@@ -112,23 +110,18 @@ const useDatePicker = () => {
       return prev;
     });
 
-    toggleCaledarOpen();
+    setCalendarOpen(false);
   };
 
   const handleBackButton = () => {
-    console.log("handleBackButton");
-
     setCalendarState(fromTo);
-
-    toggleCaledarOpen();
-    toggleDropdown();
   };
 
   const handleClearDate = () => {
     setCalendarState(fromTo);
   };
 
-  const handleShowTime = () => {
+  const toggleShowTime = () => {
     setShowTime((prev) => !prev);
   };
 
@@ -137,24 +130,26 @@ const useDatePicker = () => {
 
     dateOptions,
 
-    dropdownOpen,
-    setDropdownOpen,
-    calendarOpen,
-    setCalendarOpen,
-
     calendarState,
     setCalendarState,
+
+    calendarOpen,
+    dropdownOpen,
 
     showTime,
     setShowTime,
 
+    setCalendarOpen,
+    setDropdownOpen,
+
     handleApplyButton,
     handleBackButton,
     handleClearDate,
-    handleShowTime,
 
-    toggleCaledarOpen,
-    toggleDropdown,
+    toggleShowTime,
+    toggleCalendar,
+    handleDropdown,
+
     getButtonDisplaytext,
   };
 };

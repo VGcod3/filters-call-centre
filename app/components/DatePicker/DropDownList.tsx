@@ -4,12 +4,12 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
 } from "~/components/ui/dropdown-menu";
-import useDatePicker from "./useDatePicker";
+import { useDatePickerContext } from "./DatePickerContext";
 
 export const DropDownList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { dateOptions, setCalendarOpen } = useDatePicker();
+  const { dateOptions, toggleCalendar } = useDatePickerContext();
 
   const onCheckedChange = (opt: string) => {
     setSearchParams((prev) => {
@@ -42,7 +42,7 @@ export const DropDownList = () => {
         className="text-blue-600"
         key={"Custom"}
         checked={searchParams.has("from") && searchParams.has("to")}
-        onClick={() => setCalendarOpen(true)}
+        onClick={toggleCalendar}
       >
         <span className="text-gray-700 flex w-full justify-between items-center">
           Custom

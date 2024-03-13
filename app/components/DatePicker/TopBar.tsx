@@ -3,12 +3,12 @@ import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { cn } from "~/lib/utils";
 
-import useDatePicker from "./useDatePicker";
 import dayjs from "dayjs";
+import { useDatePickerContext } from "./DatePickerContext";
 
 export const TopBar = () => {
-  const { fromTo, showTime, handleShowTime, handleClearDate } = useDatePicker();
-
+  const { handleClearDate, fromTo, showTime, toggleShowTime } =
+    useDatePickerContext();
   return (
     <div className="flex gap-3 p-3 text-gray-600">
       <Button onClick={handleClearDate} variant={"outline"} className="p-2">
@@ -66,7 +66,7 @@ export const TopBar = () => {
           </>
         )}
       </div>
-      <Button variant={"outline"} className="p-2" onClick={handleShowTime}>
+      <Button variant={"outline"} className="p-2" onClick={toggleShowTime}>
         <ClockIcon strokeWidth={1.5} />
       </Button>
     </div>
