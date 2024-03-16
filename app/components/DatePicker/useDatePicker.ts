@@ -114,6 +114,9 @@ const useDatePicker = (): DatePickerContextProps => {
   };
 
   const handleBackButton = () => {
+    setCalendarOpen(false);
+    setDropdownOpen(true);
+
     setCalendarState(fromTo);
   };
 

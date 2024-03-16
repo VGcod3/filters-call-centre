@@ -7,18 +7,28 @@ import dayjs from "dayjs";
 import { useDatePickerContext } from "./DatePickerContext";
 
 export const TopBar = () => {
-  const { handleClearDate, fromTo, showTime, toggleShowTime } =
+  const { handleClearDate, fromTo, showTime, toggleShowTime, calendarState } =
     useDatePickerContext();
+
+  const isDisabled =
+    dayjs(fromTo?.from).isSame(dayjs(calendarState?.from)) &&
+    dayjs(fromTo?.to).isSame(dayjs(calendarState?.to));
+
   return (
     <div className="flex gap-3 p-3 text-gray-600">
-      <Button onClick={handleClearDate} variant={"outline"} className="p-2">
+      <Button
+        onClick={handleClearDate}
+        variant={"outline"}
+        className="p-2"
+        disabled={isDisabled}
+      >
         <CalendarX2Icon strokeWidth={1.5} />
       </Button>
 
       <div className="flex-1 flex flex-col">
         <Button
           variant={"outline"}
-          className={cn(showTime && "border-b-0 rounded-b-none")}
+          className={cn(showTime && "border-b-0 rounded-b-none ")}
         >
           {fromTo.from ? (
             dayjs(fromTo.from).format("MMM DD, YYYY")

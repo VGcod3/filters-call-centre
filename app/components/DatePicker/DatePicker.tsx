@@ -21,9 +21,26 @@ import { Calendar } from "~/components/ui/calendar";
 import { DatePickerProvider } from "./DatePickerContext";
 
 import type { DatePickerContextProps } from "./DatePickerContext";
+import dayjs from "dayjs";
+import { cn } from "~/lib/utils";
 
 export const DatePicker = () => {
   const ctx: DatePickerContextProps = useDatePicker();
+
+  const fromDate = dayjs().subtract(3, "months").toDate();
+  const toDate = dayjs().toDate();
+
+  const calculateLeftMonthOnCalendar = () => {
+    if (
+      dayjs(ctx.fromTo.from)
+        .add(1, "month")
+        .startOf("month")
+        .isAfter(dayjs(toDate).startOf("month"))
+    ) {
+      return dayjs(ctx.fromTo.from).subtract(1, "month").toDate();
+    }
+    return dayjs(ctx.fromTo.from).toDate();
+  };
 
   return (
     <DatePickerProvider value={ctx}>
@@ -33,11 +50,18 @@ export const DatePicker = () => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="w-auto min-w-28 text-gray-600 px-2.5 flex gap-1.5 justify-between border-none"
+                className="w-auto min-w-28 text-gray-600 px-2.5 flex gap-1.5 justify-between border-none select-none"
               >
                 <CalendarIcon size={16} strokeWidth={1.5} />
                 {ctx.getButtonDisplaytext()}
-                <ChevronDownIcon size={16} strokeWidth={1.5} />
+                <ChevronDownIcon
+                  size={16}
+                  strokeWidth={1.5}
+                  className={cn(
+                    "transition-all transform",
+                    ctx.dropdownOpen && "-rotate-180"
+                  )}
+                />
               </Button>
             </DropdownMenuTrigger>
           </PopoverTrigger>
@@ -55,9 +79,10 @@ export const DatePicker = () => {
             onSelect={(calendarData) =>
               ctx.setCalendarState(calendarData as unknown as DateRange)
             }
-            // defaultMonth={dayjs().toDate()}
-
+            defaultMonth={calculateLeftMonthOnCalendar()}
             numberOfMonths={2}
+            toDate={toDate}
+            fromDate={fromDate}
           />
 
           <Separator />
