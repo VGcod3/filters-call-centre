@@ -12,6 +12,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
+import MaskedTimeInput from "~/components/DatePicker/TimeInput";
+import { Input } from "~/components/ui/input";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
@@ -77,6 +79,8 @@ export default function Reports() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <MaskedTimeInput />
+      <Input type="time" />
       <DatePicker />
     </div>
   );
