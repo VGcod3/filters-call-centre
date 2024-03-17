@@ -5,8 +5,6 @@ import { cn } from "~/lib/utils";
 import dayjs from "dayjs";
 import { useDatePickerContext } from "./DatePickerContext";
 
-import MaskedTimeInput from "./TimeInput";
-
 export const TopBar = () => {
   const { handleClearDate, fromTo, toggleShowTime, calendarState } =
     useDatePickerContext();
@@ -76,9 +74,9 @@ const TopButton = ({ fromOrTo }: TopButtonProps) => {
 
       {showTime && (
         <>
-          {/* <span>12:00AM</span> */}
+          <span>12:00AM</span>
 
-          <MaskedTimeInput />
+          {/* <MaskedTimeInput /> */}
         </>
       )}
     </div>

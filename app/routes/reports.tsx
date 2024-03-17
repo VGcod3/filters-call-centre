@@ -12,8 +12,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-import MaskedTimeInput from "~/components/DatePicker/TimeInput";
-import { Input } from "~/components/ui/input";
+// import { MaskedTimeInput } from "~/components/DatePicker/TimeInput";
+
+import { AgentsFilter } from "~/components/MultiSelect/AgentsFilter";
+import { StatusFilter } from "~/components/MultiSelect/StatusFilter";
+import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
@@ -79,9 +82,15 @@ export default function Reports() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <MaskedTimeInput />
-      <Input type="time" />
-      <DatePicker />
+
+      <h1 className="text-2xl font-bold text-gray-700">Reports</h1>
+
+      <div className="flex space-x-1 p-1 border border-gray-300 rounded-md">
+        <DatePicker />
+        <AgentsFilter />
+        <StatusFilter />
+        <TeamsFilter />
+      </div>
     </div>
   );
 }

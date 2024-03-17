@@ -1,7 +1,7 @@
 import { Input } from "~/components/ui/input";
 import { useState } from "react";
 
-const MaskedTimeInput = () => {
+export const MaskedTimeInput = () => {
   const [time, setTime] = useState("12:00");
 
   return (
@@ -12,5 +12,3 @@ const MaskedTimeInput = () => {
     />
   );
 };
-
-export default MaskedTimeInput;

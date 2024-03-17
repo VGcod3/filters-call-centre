@@ -3,10 +3,9 @@ import { ChevronRightIcon } from "lucide-react";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuSeparator,
 } from "~/components/ui/dropdown-menu";
 import { useDatePickerContext } from "./DatePickerContext";
-
-import { Separator } from "~/components/ui/separator";
 
 export const DropDownList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -43,7 +42,8 @@ export const DropDownList = () => {
         </DropdownMenuCheckboxItem>
       ))}
 
-      <Separator className="my-0.5" />
+      <DropdownMenuSeparator className="my-0.5" />
+
       <DropdownMenuCheckboxItem
         className="text-blue-600"
         key={"Custom"}
