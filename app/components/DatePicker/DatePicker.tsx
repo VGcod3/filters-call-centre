@@ -1,4 +1,4 @@
-import { CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,7 +13,6 @@ import { DropDownList } from "./DropDownList";
 import useDatePicker from "./useDatePicker";
 
 import { Separator } from "~/components/ui/separator";
-import { Button } from "~/components/ui/button";
 import { DateRange } from "react-day-picker";
 import { BottomBar } from "./BottomBar";
 import { TopBar } from "./TopBar";
@@ -23,7 +22,7 @@ import { DatePickerProvider } from "./DatePickerContext";
 
 import type { DatePickerContextProps } from "./DatePickerContext";
 import dayjs from "dayjs";
-import { cn } from "~/lib/utils";
+import TriggerButton from "../TriggerButton";
 
 export const DatePicker = () => {
   const ctx: DatePickerContextProps = useDatePicker();
@@ -46,24 +45,19 @@ export const DatePicker = () => {
   return (
     <DatePickerProvider value={ctx}>
       <Popover open={ctx.calendarOpen}>
-        <DropdownMenu open={ctx.dropdownOpen} onOpenChange={ctx.handleDropdown}>
+        <DropdownMenu
+          open={ctx.dropdownOpen}
+          onOpenChange={() => ctx.handleDropdown(!ctx.dropdownOpen)}
+        >
           <PopoverTrigger asChild>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-auto min-w-28 text-gray-600 px-2.5 flex gap-1.5 justify-between border-none select-none"
+              <TriggerButton
+                isOpen={ctx.dropdownOpen}
+                toggleDropdown={() => ctx.handleDropdown(!ctx.dropdownOpen)}
+                Icon={CalendarIcon}
               >
-                <CalendarIcon size={16} strokeWidth={1.5} />
                 {ctx.getButtonDisplaytext()}
-                <ChevronDownIcon
-                  size={16}
-                  strokeWidth={1.5}
-                  className={cn(
-                    "transition-all transform",
-                    ctx.dropdownOpen && "-rotate-180"
-                  )}
-                />
-              </Button>
+              </TriggerButton>
             </DropdownMenuTrigger>
           </PopoverTrigger>
           <DropDownList />

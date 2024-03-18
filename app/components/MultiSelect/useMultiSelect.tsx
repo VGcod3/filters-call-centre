@@ -1,8 +1,13 @@
 import { Separator } from "~/components/ui/separator";
 import { useSearchParams } from "@remix-run/react";
 import { useState } from "react";
+import { Badge } from "../ui/badge";
+import type { GroupedListItems, ListItem } from "./types";
 
-export const useMultiSelect = (name: string) => {
+export const useMultiSelect = (
+  name: string,
+  dataList: GroupedListItems[] | ListItem[]
+) => {
   const [open, setOpen] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,19 +42,25 @@ export const useMultiSelect = (name: string) => {
   const getButtonLabel = (name: string, label: string) => {
     const searchItems = searchParams.getAll(name);
 
-    if (searchItems.length === 0) {
+    const validSearchItems = searchItems.filter((item) => {
+      if (dataList[0]?.listItems) {
+        return dataList[0].listItems.includes(item);
+      }
+      return dataList.includes(item);
+    });
+
+    if (validSearchItems.length === 0) {
       return label;
     }
 
-    if (searchItems.length > 2) {
+    if (validSearchItems.length > 2) {
       return (
         <div className="flex space-x-1 h-full">
           {label}
           <Separator orientation="vertical" className="ml-1" />
-
-          <span className="bg-gray-200 text-gray-600 rounded-sm flex space-x-1.5 px-1.5 mx-0">
-            {searchItems.length} selected
-          </span>
+          <Badge className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-sm px-1.5">
+            {validSearchItems.length} selected
+          </Badge>
         </div>
       );
     }
@@ -58,14 +69,13 @@ export const useMultiSelect = (name: string) => {
       <div className="flex space-x-1 h-full">
         {label}
         <Separator orientation="vertical" className="ml-1" />
-
-        {searchItems.map((item) => (
-          <span
-            className="bg-gray-200 text-gray-600 rounded-sm flex space-x-1.5 px-1.5 mx-0"
+        {validSearchItems.map((item) => (
+          <Badge
             key={item}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-sm px-1.5"
           >
             {item}
-          </span>
+          </Badge>
         ))}
       </div>
     );

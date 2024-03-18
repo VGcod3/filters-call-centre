@@ -1,10 +1,8 @@
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "~/components/ui/dropdown-menu";
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "~/components/ui/popover";
 
 import { Checkbox } from "../ui/checkbox";
 
@@ -17,6 +15,15 @@ import {
 } from "./types";
 import { useMultiSelect } from "./useMultiSelect";
 
+import {
+  Command,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandGroup,
+  CommandInput,
+  CommandEmpty,
+} from "../ui/command";
 import TriggerButton from "../TriggerButton";
 
 export function MultiSelectFilter({
@@ -31,36 +38,48 @@ export function MultiSelectFilter({
     handleClearAll,
     toggleDropdown,
     getButtonLabel,
-  } = useMultiSelect(name);
+  } = useMultiSelect(name, dataList);
 
   return (
-    <DropdownMenu open={open} onOpenChange={toggleDropdown}>
-      <TriggerButton isOpen={open} Icon={Icon} toggleDropdown={toggleDropdown}>
-        {getButtonLabel(name, title)}
-      </TriggerButton>
-      <DropdownMenuContent className="w-56" align="start">
-        {dataList[0]?.label ? (
-          <GroupedDropdownList
-            name={name}
-            list={dataList as GroupedListItems[]}
-            handleCheckboxChange={toggleCheckbox}
-          />
-        ) : (
-          <DropdownList
-            name={name}
-            list={dataList as ListItem[]}
-            handleCheckboxChange={toggleCheckbox}
-          />
-        )}
-        <DropdownMenuSeparator className="my-0.5" />
-        <DropdownMenuItem
-          className="flex justify-center"
-          onSelect={handleClearAll}
+    <Popover>
+      <PopoverTrigger asChild>
+        <TriggerButton
+          isOpen={open}
+          toggleDropdown={toggleDropdown}
+          Icon={Icon}
         >
-          Clear filters
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {getButtonLabel(name, title)}
+        </TriggerButton>
+      </PopoverTrigger>
+      <PopoverContent className="w-56 p-1" align="start">
+        <Command>
+          <CommandInput placeholder={`Search for ${name}`} />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            {dataList[0]?.listItems ? (
+              <GroupedDropdownList
+                name={name}
+                list={dataList as GroupedListItems[]}
+                handleCheckboxChange={toggleCheckbox}
+              />
+            ) : (
+              <DropdownList
+                name={name}
+                list={dataList as ListItem[]}
+                handleCheckboxChange={toggleCheckbox}
+              />
+            )}
+            <CommandSeparator className="my-0.5" />
+            <CommandItem
+              className="flex justify-center"
+              onSelect={handleClearAll}
+            >
+              Clear filters
+            </CommandItem>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -72,18 +91,17 @@ const DropdownList = ({
   const [searchParams] = useSearchParams();
 
   return list.map((listItem: ListItem) => (
-    <DropdownMenuItem
+    <CommandItem
       key={listItem}
       onSelect={() => handleCheckboxChange(listItem)}
+      className="flex space-x-2 text-gray-500"
     >
-      <div className="flex items-ceter space-x-2 text-gray-500 font-normal">
-        <Checkbox
-          className="border-gray-300 data-[state=checked]:border-primary"
-          checked={searchParams.getAll(name).includes(listItem)}
-        />
-        <span>{listItem}</span>
-      </div>
-    </DropdownMenuItem>
+      <Checkbox
+        className="border-gray-300 data-[state=checked]:border-primary"
+        checked={searchParams.getAll(name).includes(listItem)}
+      />
+      <span>{listItem}</span>
+    </CommandItem>
   ));
 };
 
@@ -99,24 +117,24 @@ const GroupedDropdownList = ({
   const [searchParams] = useSearchParams();
 
   return list.map((group: GroupedListItems, index: number) => (
-    <div key={index}>
-      <DropdownMenuLabel className="font-normal text-gray-800">
-        {group.label}
-      </DropdownMenuLabel>
+    <CommandGroup
+      key={index}
+      heading={group.label}
+      className="font-normal text-gray-800"
+    >
       {group.listItems.map((listItem: ListItem) => (
-        <DropdownMenuItem
+        <CommandItem
           key={listItem}
           onSelect={() => handleCheckboxChange(listItem)}
+          className="flex space-x-2 text-gray-500"
         >
-          <div className="flex items-ceter space-x-2 text-gray-500 font-normal">
-            <Checkbox
-              className="border-gray-300 data-[state=checked]:border-primary"
-              checked={searchParams.getAll(name).includes(listItem)}
-            />
-            <span>{listItem}</span>
-          </div>
-        </DropdownMenuItem>
+          <Checkbox
+            className="border-gray-300 data-[state=checked]:border-primary"
+            checked={searchParams.getAll(name).includes(listItem)}
+          />
+          <span>{listItem}</span>
+        </CommandItem>
       ))}
-    </div>
+    </CommandGroup>
   ));
 };
