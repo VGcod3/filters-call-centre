@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
+import { json, redirect } from "@remix-run/node";
 import { z } from "zod";
 import DatePicker from "~/components/DatePicker";
 
@@ -12,11 +12,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
-// import { MaskedTimeInput } from "~/components/DatePicker/TimeInput";
-
-import { AgentsFilter } from "~/components/MultiSelect/AgentsFilter";
-import { StatusFilter } from "~/components/MultiSelect/StatusFilter";
-import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
 
 import { fromDate, toDate } from "~/components/DatePicker/DatePicker";
 import dayjs from "dayjs";
@@ -24,6 +19,11 @@ import dayjs from "dayjs";
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
 };
+
+import { TableData, tableData } from "~/components/SimpleTable/table-data";
+import { QeuesFilter } from "~/components/MultiSelect/QeuesFilter";
+import { columns } from "~/components/SimpleTable/columns";
+import { DataTable } from "~/components/SimpleTable/data-table";
 
 const statsPeriodsEnum = z.enum([
   "1H",
@@ -53,7 +53,7 @@ export const searchParamsSchema = z.union([
   }),
 ]);
 
-export function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   const searchParams = url.searchParams;
@@ -71,12 +71,20 @@ export function loader({ request }: LoaderFunctionArgs) {
     return redirect(url.toString());
   }
 
-  return null;
+  // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  return json({ tableData: tableData as TableData[] });
 }
 
 export default function Reports() {
+  const { tableData } = useLoaderData() as {
+    tableData: TableData[] | undefined;
+  };
+
+  console.log(tableData);
+
   return (
-    <div className="bg-gray-200 flex h-screen w-full flex-col gap-3 justify-start items-start p-5">
+    <div className="bg-gray-100 flex h-screen w-full flex-col gap-3 justify-start items-start p-5">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -92,15 +100,18 @@ export default function Reports() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
       <h1 className="text-2xl font-bold text-gray-700">Reports</h1>
+      <div className="flex w-full justify-between ">
+        <div className="flex space-x-1 border p-1 border-gray-300 rounded-md">
+          <DatePicker />
+          <QeuesFilter />
+        </div>
 
-      <div className="flex space-x-1 p-1 border border-gray-300 rounded-md">
-        <DatePicker />
-        <AgentsFilter />
-        <StatusFilter />
-        <TeamsFilter />
+        <span className="font-extralight tracking-tight">
+          {tableData?.length || "No"} results found
+        </span>
       </div>
+      {tableData && <DataTable columns={columns} data={tableData} />}
     </div>
   );
 }
