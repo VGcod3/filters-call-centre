@@ -25,6 +25,7 @@ export default function Dropdown() {
 
   const [dropdownContentType, setDropdownContentType] =
     useState<DropdownContentType>("checkbox");
+
   return (
     <div className="p-4">
       <DropdownMenu
@@ -95,7 +96,19 @@ export default function Dropdown() {
                     setSearchParams({ dropdownValue: "custom" });
                   }}
                 >
-                  <Button variant={"destructive"}>Apply</Button>
+                  <Button
+                    onKeyDown={(e) => {
+                      // focus on its previous sibling when pressing the shift + tab keys
+                      if (e.shiftKey && e.key === "Tab") {
+                        const prev = e.currentTarget.previousElementSibling;
+                        if (prev instanceof HTMLButtonElement) {
+                          prev.focus();
+                        }
+                      }
+                    }}
+                  >
+                    Apply
+                  </Button>
                 </DropdownMenuItem>
               </div>
             </div>
