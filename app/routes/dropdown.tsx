@@ -73,21 +73,50 @@ export default function Dropdown() {
                 Calendar
               </div>
               <div className="flex justify-around">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setDropdownContentType("checkbox");
+                <DropdownMenuItem
+                  asChild
+                  onSelect={(e) => {
+                    e.preventDefault();
                   }}
                 >
-                  Back
-                </Button>
+                  <Button
+                    onKeyDown={(e) => {
+                      // focus on its next sibling when pressing the tab key
+                      if (e.key === "Tab") {
+                        // e.preventDefault();
+                        const next = e.currentTarget.nextElementSibling;
+                        if (next instanceof HTMLButtonElement) {
+                          next.focus();
+                        }
+                      }
+                    }}
+                    variant="secondary"
+                    onClick={() => {
+                      setDropdownContentType("checkbox");
+                    }}
+                  >
+                    Back
+                  </Button>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   asChild
                   onSelect={() => {
                     setSearchParams({ dropdownValue: "custom" });
                   }}
                 >
-                  <Button>Apply</Button>
+                  <Button
+                    onKeyDown={(e) => {
+                      // focus on its previous sibling when pressing the shift + tab keys
+                      if (e.shiftKey && e.key === "Tab") {
+                        const prev = e.currentTarget.previousElementSibling;
+                        if (prev instanceof HTMLButtonElement) {
+                          prev.focus();
+                        }
+                      }
+                    }}
+                  >
+                    Apply
+                  </Button>
                 </DropdownMenuItem>
               </div>
             </div>
