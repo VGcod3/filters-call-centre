@@ -44,16 +44,13 @@ export const DatePicker = () => {
 
   return (
     <DatePickerProvider value={ctx}>
-      <Popover open={ctx.calendarOpen}>
-        <DropdownMenu
-          open={ctx.dropdownOpen}
-          onOpenChange={() => ctx.handleDropdown(!ctx.dropdownOpen)}
-        >
+      <Popover open={ctx.calendarOpen} onOpenChange={ctx.toggleCalendar}>
+        <DropdownMenu open={ctx.dropdownOpen} onOpenChange={ctx.toggleDropdown}>
           <PopoverTrigger asChild>
             <DropdownMenuTrigger asChild>
               <TriggerButton
                 isOpen={ctx.dropdownOpen}
-                toggleDropdown={() => ctx.handleDropdown(!ctx.dropdownOpen)}
+                toggleDropdown={ctx.toggleDropdown}
                 Icon={CalendarIcon}
               >
                 {ctx.getButtonDisplaytext()}

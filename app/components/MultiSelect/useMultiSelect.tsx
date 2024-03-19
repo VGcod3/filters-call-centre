@@ -2,11 +2,16 @@ import { Separator } from "~/components/ui/separator";
 import { useSearchParams } from "@remix-run/react";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
-import type { GroupedListItems, ListItem } from "./types";
+import type {
+  GroupedList,
+  GroupedListItem,
+  ListItem,
+  PlainList,
+} from "./types";
 
 export const useMultiSelect = (
   name: string,
-  dataList: GroupedListItems[] | ListItem[]
+  dataList: GroupedListItem[] | ListItem[]
 ) => {
   const [open, setOpen] = useState(false);
 
@@ -39,12 +44,15 @@ export const useMultiSelect = (
     setOpen((prev) => !prev);
   };
 
+  const isGrouped = (list: GroupedList | PlainList): list is GroupedList =>
+    (list as GroupedList)[0]?.listItems !== undefined;
+
   const getButtonLabel = (name: string, label: string) => {
     const searchItems = searchParams.getAll(name);
 
     const validSearchItems = searchItems.filter((item) => {
-      if (dataList[0]?.listItems) {
-        return dataList[0].listItems.includes(item);
+      if (isGrouped(dataList)) {
+        return dataList.some((group) => group.listItems.includes(item));
       }
       return dataList.includes(item);
     });
@@ -84,6 +92,7 @@ export const useMultiSelect = (
   return {
     open,
     setOpen,
+    isGrouped,
     toggleCheckbox,
     handleClearAll,
     getButtonLabel,

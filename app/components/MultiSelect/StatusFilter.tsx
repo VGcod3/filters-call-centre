@@ -1,8 +1,8 @@
 import { PhoneIcon } from "lucide-react";
 import { MultiSelectFilter } from "./MultiSelectFilter";
-import { GroupedListItems } from "./types";
+import { GroupedListItem } from "./types";
 
-const groupedStatuses: GroupedListItems[] = [
+const groupedStatuses: GroupedListItem[] = [
   {
     label: "Working status",
     listItems: ["Available", "Busy", "Away"],

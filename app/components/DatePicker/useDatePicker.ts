@@ -5,6 +5,7 @@ import { useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import { searchParamsSchema } from "~/routes/reports";
 import { DatePickerContextProps } from "./DatePickerContext";
+import { set } from "zod";
 
 export enum PresetDates {
   "1H" = "Last hour",
@@ -86,18 +87,21 @@ const useDatePicker = (): DatePickerContextProps => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [showTime, setShowTime] = useState(false);
 
-  const handleDropdown = (state: boolean) => {
-    setDropdownOpen(state);
-
-    if (state && calendarOpen) {
-      setCalendarOpen(false);
+  const toggleCalendar = () => {
+    if (calendarOpen && !dropdownOpen) {
+      toggleCalendarAndCloseDropdown();
     }
+    resetCalendarStateToDataFromUrl();
   };
 
-  const toggleCalendar = () => {
-    setCalendarOpen((prev) => !prev);
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen || calendarOpen);
+  };
 
-    setCalendarState(fromTo);
+  const toggleCalendarAndCloseDropdown = () => {
+    setCalendarOpen(!calendarOpen && dropdownOpen);
+
+    setDropdownOpen(false);
   };
 
   const handleApplyButton = () => {
@@ -117,10 +121,10 @@ const useDatePicker = (): DatePickerContextProps => {
     setCalendarOpen(false);
     setDropdownOpen(true);
 
-    setCalendarState(fromTo);
+    resetCalendarStateToDataFromUrl();
   };
 
-  const handleClearDate = () => {
+  const resetCalendarStateToDataFromUrl = () => {
     setCalendarState(fromTo);
   };
 
@@ -147,13 +151,15 @@ const useDatePicker = (): DatePickerContextProps => {
 
     handleApplyButton,
     handleBackButton,
-    handleClearDate,
+    handleClearDate: resetCalendarStateToDataFromUrl,
 
     toggleShowTime,
     toggleCalendar,
-    handleDropdown,
+    toggleDropdown,
 
     getButtonDisplaytext,
+
+    toggleCalendarAndCloseDropdown,
   };
 };
 

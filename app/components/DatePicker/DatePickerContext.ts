@@ -24,9 +24,11 @@ export interface DatePickerContextProps {
 
   toggleShowTime: () => void;
   toggleCalendar: () => void;
-  handleDropdown: (value: boolean) => void;
+  toggleDropdown: () => void;
 
   getButtonDisplaytext: () => string;
+
+  toggleCalendarAndCloseDropdown: () => void;
 }
 
 const DatePickerContext = createContext<DatePickerContextProps | undefined>(

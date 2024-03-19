@@ -1,17 +1,24 @@
 import { useSearchParams } from "@remix-run/react";
-import { ChevronRightIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuSeparator,
 } from "~/components/ui/dropdown-menu";
 import { useDatePickerContext } from "./DatePickerContext";
+import { Button } from "../ui/button";
+import { cn } from "~/lib/utils";
 
 export const DropDownList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { dateOptions, toggleCalendar, handleDropdown } =
-    useDatePickerContext();
+  const {
+    dateOptions,
+
+    toggleDropdown,
+
+    toggleCalendarAndCloseDropdown,
+  } = useDatePickerContext();
 
   const onCheckedChange = (opt: string) => {
     setSearchParams((prev) => {
@@ -23,7 +30,7 @@ export const DropDownList = () => {
       return prev;
     });
 
-    handleDropdown(false);
+    toggleDropdown();
   };
 
   return (
@@ -44,22 +51,25 @@ export const DropDownList = () => {
 
       <DropdownMenuSeparator className="my-0.5" />
 
-      <DropdownMenuCheckboxItem
-        className="text-blue-600"
-        key={"Custom"}
-        checked={searchParams.has("from") && searchParams.has("to")}
-        onClick={toggleCalendar}
-        onKeyDown={(e) => {
-          if (e.key === "ArrowRight") {
-            toggleCalendar();
-          }
-        }}
+      <Button
+        variant={"ghost"}
+        onClick={toggleCalendarAndCloseDropdown}
+        className="pr-2 py-1.5 pl-2 w-full text-gray-700 font-normal"
       >
-        <span className="text-gray-700 flex w-full justify-between items-center">
+        <CheckIcon
+          strokeWidth={1.5}
+          className={cn(
+            "p-1 text-blue-600",
+            searchParams.has("from") && searchParams.has("to")
+              ? "opacity-100"
+              : "opacity-0"
+          )}
+        />
+        <span className="flex w-full justify-between items-center">
           Custom
           <ChevronRightIcon strokeWidth={1.5} className="p-1" />
         </span>
-      </DropdownMenuCheckboxItem>
+      </Button>
     </DropdownMenuContent>
   );
 };
