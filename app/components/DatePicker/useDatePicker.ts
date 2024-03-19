@@ -5,7 +5,6 @@ import { useSearchParams } from "@remix-run/react";
 import dayjs from "dayjs";
 import { searchParamsSchema } from "~/routes/reports";
 import { DatePickerContextProps } from "./DatePickerContext";
-import { set } from "zod";
 
 export enum PresetDates {
   "1H" = "Last hour",
@@ -66,9 +65,7 @@ const useDatePicker = (): DatePickerContextProps => {
 
   const getButtonDisplaytext = () => {
     if (searchParams.has("statsPeriod")) {
-      return PresetDates[
-        searchParams.get("statsPeriod") as keyof typeof PresetDates
-      ];
+      return searchParams.get("statsPeriod") as keyof typeof PresetDates;
     }
 
     const from = dayjs(fromTo.from).format("MMM DD, YYYY");
