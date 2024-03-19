@@ -8,9 +8,13 @@ import {
 import { useDatePickerContext } from "./DatePickerContext";
 import { Button } from "../ui/button";
 import { cn } from "~/lib/utils";
+import { useRef } from "react";
 
 export const DropDownList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const prelastRef = useRef<HTMLDivElement>(null);
 
   const {
     dateOptions,
@@ -35,7 +39,7 @@ export const DropDownList = () => {
 
   return (
     <DropdownMenuContent className="w-56" align="start">
-      {dateOptions.map((opt) => (
+      {dateOptions.map((opt, i) => (
         <DropdownMenuCheckboxItem
           className="text-blue-600"
           key={opt.value}
@@ -43,6 +47,12 @@ export const DropDownList = () => {
             searchParams.has("statsPeriod") &&
             searchParams.get("statsPeriod") === opt.value
           }
+          ref={i === dateOptions.length - 1 ? prelastRef : undefined}
+          onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
+            if (e.key === "ArrowDown" && i === dateOptions.length - 1) {
+              buttonRef.current?.focus();
+            }
+          }}
           onCheckedChange={() => onCheckedChange(opt.value)}
         >
           <span className="text-gray-700">{opt.label}</span>
@@ -52,9 +62,17 @@ export const DropDownList = () => {
       <DropdownMenuSeparator className="my-0.5" />
 
       <Button
+        ref={buttonRef}
         variant={"ghost"}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowUp") {
+            prelastRef.current?.focus();
+          } else if (e.key === "ArrowRight") {
+            toggleCalendarAndCloseDropdown();
+          }
+        }}
         onClick={toggleCalendarAndCloseDropdown}
-        className="pr-2 py-1.5 pl-2 w-full text-gray-700 font-normal"
+        className="pr-2 py-1.5 pl-2 w-full text-gray-700 font-normal focus-visible:bg-accent focus-visible:ring-0"
       >
         <CheckIcon
           strokeWidth={1.5}
