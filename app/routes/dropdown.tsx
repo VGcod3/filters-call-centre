@@ -1,5 +1,6 @@
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useSearchParams } from "@remix-run/react";
+import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
@@ -63,8 +64,14 @@ export default function Dropdown() {
                   setDropdownContentType("calendar");
                 }}
                 checked={dropdownValue === "custom"}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowRight") {
+                    setDropdownContentType("calendar");
+                  }
+                }}
               >
                 Custom
+                <ChevronRight />
               </DropdownMenuCheckboxItem>
             </>
           ) : (
@@ -72,22 +79,23 @@ export default function Dropdown() {
               <div className="flex flex-grow items-center justify-center">
                 Calendar
               </div>
-              <div className="flex justify-around">
-                <Button
-                  variant="secondary"
-                  onClick={() => {
+              <div className="flex  justify-around">
+                <DropdownMenuItem
+                  asChild
+                  onSelect={(e) => {
+                    e.preventDefault();
                     setDropdownContentType("checkbox");
                   }}
                 >
-                  Back
-                </Button>
+                  <Button variant={"secondary"}>Back</Button>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   asChild
                   onSelect={() => {
                     setSearchParams({ dropdownValue: "custom" });
                   }}
                 >
-                  <Button>Apply</Button>
+                  <Button variant={"destructive"}>Apply</Button>
                 </DropdownMenuItem>
               </div>
             </div>
