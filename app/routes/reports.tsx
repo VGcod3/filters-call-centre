@@ -18,6 +18,9 @@ import { AgentsFilter } from "~/components/MultiSelect/AgentsFilter";
 import { StatusFilter } from "~/components/MultiSelect/StatusFilter";
 import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
 
+import { fromDate, toDate } from "~/components/DatePicker/DatePicker";
+import dayjs from "dayjs";
+
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
 };
@@ -33,13 +36,20 @@ const statsPeriodsEnum = z.enum([
 
 // type StatsPeriod = z.infer<typeof statsPeriodsEnum>;
 
+//handle daytlight shift
+const withInDateRange = (date: Date) => {
+  return (
+    dayjs(date).isAfter(dayjs(fromDate)) && dayjs(date).isBefore(dayjs(toDate))
+  );
+};
+
 export const searchParamsSchema = z.union([
   z.object({
     statsPeriod: statsPeriodsEnum,
   }),
   z.object({
-    from: z.coerce.date(),
-    to: z.coerce.date(),
+    from: z.coerce.date().refine((value) => withInDateRange(value)),
+    to: z.coerce.date().refine((value) => withInDateRange(value)),
   }),
 ]);
 

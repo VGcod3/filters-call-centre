@@ -24,11 +24,11 @@ import type { DatePickerContextProps } from "./DatePickerContext";
 import dayjs from "dayjs";
 import TriggerButton from "../TriggerButton";
 
+export const fromDate = dayjs().subtract(3, "months").toDate();
+export const toDate = dayjs().toDate();
+
 export const DatePicker = () => {
   const ctx: DatePickerContextProps = useDatePicker();
-
-  const fromDate = dayjs().subtract(3, "months").toDate();
-  const toDate = dayjs().toDate();
 
   const calculateLeftMonthOnCalendar = () => {
     if (
