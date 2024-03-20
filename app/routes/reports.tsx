@@ -2,7 +2,8 @@ import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { z } from "zod";
-import DatePicker from "~/components/DatePicker";
+
+import { DatePicker } from "~/components/DatePicker";
 
 import {
   Breadcrumb,

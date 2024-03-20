@@ -31,11 +31,6 @@ export default function Index() {
           Reports
         </Link>
       </Button>
-      <Button variant={"outline"} asChild>
-        <Link prefetch="intent" to={"/dropdown"}>
-          Dropdown (State Demo)
-        </Link>
-      </Button>
 
       <RoundButton className="bg-black">
         <PhoneCallIcon />

@@ -2,16 +2,19 @@ import { useSearchParams } from "@remix-run/react";
 import { ChevronRightIcon } from "lucide-react";
 import {
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
   DropdownMenuSeparator,
 } from "~/components/ui/dropdown-menu";
-import { useDatePickerContext } from "./DatePickerContext";
+import { useDatePicker } from "./useDatePicker";
+import { DropdownType } from "./DatePicker";
 
-export const DropDownList = () => {
+export const DropdownView = ({
+  setDropdownContentType,
+}: {
+  setDropdownContentType: (value: DropdownType) => void;
+}) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { dateOptions, toggleCalendar, handleDropdown } =
-    useDatePickerContext();
+  const { dateOptions } = useDatePicker();
 
   const onCheckedChange = (opt: string) => {
     setSearchParams((prev) => {
@@ -22,21 +25,20 @@ export const DropDownList = () => {
 
       return prev;
     });
-
-    handleDropdown(false);
   };
 
   return (
-    <DropdownMenuContent className="w-56" align="start">
+    <div className="w-56 text-blue-600">
       {dateOptions.map((opt) => (
         <DropdownMenuCheckboxItem
-          className="text-blue-600"
           key={opt.value}
           checked={
             searchParams.has("statsPeriod") &&
             searchParams.get("statsPeriod") === opt.value
           }
-          onCheckedChange={() => onCheckedChange(opt.value)}
+          onCheckedChange={() => {
+            onCheckedChange(opt.value);
+          }}
         >
           <span className="text-gray-700">{opt.label}</span>
         </DropdownMenuCheckboxItem>
@@ -45,13 +47,16 @@ export const DropDownList = () => {
       <DropdownMenuSeparator className="my-0.5" />
 
       <DropdownMenuCheckboxItem
-        className="text-blue-600"
+        className="w-full flex justify-between items-center cursor-pointer"
         key={"Custom"}
+        onSelect={(e) => {
+          e.preventDefault();
+          setDropdownContentType(DropdownType.calendar);
+        }}
         checked={searchParams.has("from") && searchParams.has("to")}
-        onClick={toggleCalendar}
         onKeyDown={(e) => {
           if (e.key === "ArrowRight") {
-            toggleCalendar();
+            setDropdownContentType(DropdownType.calendar);
           }
         }}
       >
@@ -60,6 +65,6 @@ export const DropDownList = () => {
           <ChevronRightIcon strokeWidth={1.5} className="p-1" />
         </span>
       </DropdownMenuCheckboxItem>
-    </DropdownMenuContent>
+    </div>
   );
 };
