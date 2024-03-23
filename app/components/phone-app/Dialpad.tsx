@@ -6,8 +6,14 @@ import type { CallOptions } from "jssip/lib/UA";
 import { DialButton } from "./DialButton";
 
 export function Dialpad() {
-  const { switchPhoneState, dialerInput, userAgent, addCall, removeCall } =
-    usePhone();
+  const {
+    switchPhoneState,
+    dialerInput,
+    userAgent,
+    addCall,
+    removeCall,
+    audioRef,
+  } = usePhone();
 
   const eventHandlers: Partial<RTCSessionEventMap> = {
     connecting: () => {
@@ -20,6 +26,8 @@ export function Dialpad() {
     },
     failed: (e) => {
       console.log("call failed with cause: " + e.cause);
+      removeCall();
+      switchPhoneState(PhoneState.Idle);
     },
     ended: (e) => {
       console.log("call ended with cause: " + e.cause);
@@ -32,6 +40,15 @@ export function Dialpad() {
     accepted: () => {
       console.log("Call is talking");
       switchPhoneState(PhoneState.Talking);
+    },
+    peerconnection: (event) => {
+      const peerConnection = event.peerconnection;
+      console.log("peerconnection", peerConnection);
+      peerConnection.ontrack = (e) => {
+        if (audioRef.current) {
+          audioRef.current.srcObject = e.streams[0];
+        }
+      };
     },
   };
 

@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { createContext, useState, useContext } from "react";
 import JsSIP from "jssip";
 import type { UAConfiguration, UnRegisteredEvent } from "jssip/lib/UA";
@@ -28,6 +28,7 @@ interface PhoneContextType {
   currentCall: RTCSession | null;
   addCall: (call: RTCSession) => void;
   removeCall: () => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
   floatingPhone: boolean;
   toggleFloatingPhone: () => void;
   switchPhoneState: (state: PhoneState) => void;
@@ -122,12 +123,16 @@ export function PhoneProvider({ children }: PhoneProviderProps) {
   const addCall = (call: RTCSession) => setCurrentCall(call);
   const removeCall = () => setCurrentCall(null);
 
+  // 3. Refs
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   const value: PhoneContextType = {
     phoneState,
     userAgent,
     currentCall,
     addCall,
     removeCall,
+    audioRef,
     floatingPhone,
     toggleFloatingPhone,
     switchPhoneState,

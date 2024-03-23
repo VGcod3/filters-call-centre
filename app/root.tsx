@@ -13,9 +13,12 @@ import { PhoneIcon, XIcon } from "lucide-react";
 import { PhoneScreen } from "./components/phone-app/PhoneScreen";
 
 function LayoutPhone({ children }: { children: React.ReactNode }) {
-  const { floatingPhone, toggleFloatingPhone } = usePhone();
+  const { floatingPhone, toggleFloatingPhone, audioRef } = usePhone();
   return (
     <div className="relative">
+      <audio ref={audioRef} hidden autoPlay>
+        <track kind="captions" />
+      </audio>
       {floatingPhone && (
         <div className="absolute bottom-20 right-7 z-50">
           <PhoneScreen />
