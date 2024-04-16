@@ -42,14 +42,14 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
 
       <nav
         className={`${
-          isOpen ? "w-[300px]" : "w-0"
+          isOpen ? "w-[300px] opacity-100" : "w-0 opacity-0"
         } fixed left-0 bg-[#d1d1d1] overflow-hidden ${
           isFull ? "top-0" : "top-[8%]"
         } ${isFull ? "bottom-0" : "bottom-[8%]"} transition-all duration-700 ease-in-out`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="relative w-full">
+        <div className="relative w-full whitespace-nowrap">
           <h2>Content with pure tailwind</h2>
           {isFull && (
             <Button

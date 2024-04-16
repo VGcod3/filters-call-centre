@@ -41,10 +41,10 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         initial={{ width: "0px" }}
-        animate={{ width: isOpen ? '300px' : 0  }}
+        animate={{ width: isOpen ? '300px' : 0}}
         className={`fixed left-0 bg-[#d1d1d1] overflow-hidden ${isFull ? 'top-0' : 'top-[8%]'} ${isFull ? 'bottom-0' : 'bottom-[8%]'}`}
       >
-        <div className="relative w-full">
+        <div className="relative w-full whitespace-nowrap">
           <h2>Content</h2>
           {isFull && (
             <motion.button
