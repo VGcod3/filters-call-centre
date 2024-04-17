@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Menu, StepBack, StepForward } from "lucide-react";
+import { PanelsTopLeft, StepBack } from "lucide-react";
 import { Button } from "../ui/button";
+import clsx from 'clsx';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,19 +9,16 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isFull, setIsFull] = useState(false);
 
   const handleMouseEnter = () => {
     if (!isFull) {
-      setIsHovered(true);
       setIsOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
     if (!isFull) {
-      setIsHovered(false);
       setIsOpen(false);
     }
   };
@@ -36,16 +34,20 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           size="icon"
           className="cursor-pointer"
         >
-          {isHovered ? <StepForward /> : <Menu />}
+          <PanelsTopLeft />
         </Button>
       )}
 
       <nav
-        className={`${
-          isOpen ? "w-[300px] opacity-100" : "w-0 opacity-0"
-        } fixed left-0 bg-[#d1d1d1] overflow-hidden ${
-          isFull ? "top-0" : "top-[8%]"
-        } ${isFull ? "bottom-0" : "bottom-[8%]"} transition-all duration-700 ease-in-out`}
+        className={clsx(
+          "w-[300px]",
+          isOpen ? isFull ? "translate-x-0" : "translate-x-3" : "translate-x-[-100%]",
+          "fixed left-0 bg-[#d1d1d1] overflow-hidden",
+          isFull ? "top-0" : "top-[8%]",
+          isFull ? "bottom-0" : "bottom-[8%]",
+          "transition-all duration-500 ease-in-out",
+          !isFull && "rounded-xl"
+        )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -59,7 +61,6 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
               onClick={() => {
                 setIsFull(false);
                 setIsOpen(false);
-                setIsHovered(false);
               }}
             >
               <StepBack />

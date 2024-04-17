@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Menu, StepBack, StepForward } from "lucide-react";
+import { PanelsTopLeft, StepBack } from "lucide-react";
+import clsx from 'clsx';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,19 +9,16 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isFull, setIsFull] = useState<boolean>(false);
 
   const handleMouseEnter = () => {
-    if(!isFull){
-      setIsHovered(true);
+    if (!isFull) {
       setIsOpen(true);
     }
   };
 
   const handleMouseLeave = () => {
-    if(!isFull){
-      setIsHovered(false);
+    if (!isFull) {
       setIsOpen(false);
     }
   };
@@ -32,19 +30,28 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={() => setIsFull(true)}
-          className="cursor-pointer"
+          className={clsx("cursor-pointer")}
         >
-          {isHovered ? <StepForward /> : <Menu />}
+          <PanelsTopLeft />
         </motion.button>
       )}
       <motion.nav
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        initial={{ width: "0px" }}
-        animate={{ width: isOpen ? '300px' : 0}}
-        className={`fixed left-0 bg-[#d1d1d1] overflow-hidden ${isFull ? 'top-0' : 'top-[8%]'} ${isFull ? 'bottom-0' : 'bottom-[8%]'}`}
+        initial={{ width: "300px", translateX: "-100%" }}
+        animate={{
+          width: "300px",
+          translateX: isOpen ? isFull ? '0' : "3%" : "-100%",
+          transition: { duration: 0.3 },
+        }}
+        className={clsx(
+          "fixed left-0 bg-[#d1d1d1] overflow-hidden",
+          isFull ? "top-0" : "top-[8%]",
+          isFull ? "bottom-0" : "bottom-[8%]",
+          !isFull && "rounded-xl"
+        )}
       >
-        <div className="relative w-full whitespace-nowrap">
+        <div className="relative w-full">
           <h2>Content</h2>
           {isFull && (
             <motion.button
@@ -52,7 +59,6 @@ const Sidebar = ({ isOpen, setIsOpen }: SidebarProps) => {
               onClick={() => {
                 setIsFull(false);
                 setIsOpen(false);
-                setIsHovered(false);
               }}
             >
               <StepBack />
