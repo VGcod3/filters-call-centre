@@ -1,12 +1,19 @@
+import { createCookie } from "@remix-run/node";
 import Backend from "i18next-fs-backend";
 import { resolve } from "node:path";
 import { RemixI18Next } from "remix-i18next/server";
 import i18n from "~/i18n";
 
+export const i18nCookie = createCookie("i18n", {
+	sameSite: "lax",
+	path: "/",
+});
+
 const i18next = new RemixI18Next({
 	detection: {
 		supportedLanguages: i18n.supportedLngs,
 		fallbackLanguage: i18n.fallbackLng,
+		cookie: i18nCookie,
 	},
 	i18next: {
 		...i18n,
