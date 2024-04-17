@@ -31,6 +31,16 @@ export default function Index() {
           go to reports
         </Link>
       </Button>
+      <Button variant="outline" >
+        <Link to="/navbar_framer">
+          Navbar framer motion
+        </Link>
+      </Button>
+      <Button variant="outline" >
+        <Link to="/navbar_pure">
+          Navbar pure
+        </Link>
+      </Button>
 
       <RoundButton className="bg-black">
         <PhoneCallIcon />
