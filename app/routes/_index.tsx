@@ -31,7 +31,11 @@ export default function Index() {
           go to reports
         </Link>
       </Button>
-
+      <Button variant={"outline"}>
+        <Link prefetch="intent" to={"/languages"}>
+          i18n
+        </Link>
+      </Button>
       <RoundButton className="bg-black">
         <PhoneCallIcon />
       </RoundButton>
