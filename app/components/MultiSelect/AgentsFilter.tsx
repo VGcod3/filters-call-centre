@@ -1,6 +1,6 @@
 import { UserIcon } from "lucide-react";
 import { MultiSelectFilter } from "./MultiSelectFilter";
-import { ListItem } from "./types";
+import type { ListItem } from "./types";
 
 const agents: ListItem[] = [
   "James D.",

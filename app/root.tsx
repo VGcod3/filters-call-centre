@@ -28,8 +28,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   );
 }
 
-export const  handle = {
-	i18n: "common",
+export const handle = {
+  i18n: "common",
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -39,7 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   if (!locale) {
     return null;
   }
-	useChangeLanguage(locale);
+  useChangeLanguage(locale);
 
   const currentLanguage = Lang.find((lang) => lang.key === i18n.language);
   return (

@@ -1,6 +1,6 @@
 import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
+import { json, redirect } from "@remix-run/node";
 import { z } from "zod";
 import DatePicker from "~/components/DatePicker";
 
@@ -17,6 +17,11 @@ import {
 import { AgentsFilter } from "~/components/MultiSelect/AgentsFilter";
 import { StatusFilter } from "~/components/MultiSelect/StatusFilter";
 import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
+import { QueuesFilter } from "~/components/MultiSelect/QueuesFilter";
+
+import { tableData } from "~/components/SimpleTable/mock-data";
+import { columns } from "~/components/SimpleTable/columns";
+import { DataTable } from "~/components/SimpleTable/DataTable";
 
 import { fromDate, toDate } from "~/components/DatePicker/DatePicker";
 import dayjs from "dayjs";
@@ -71,10 +76,12 @@ export function loader({ request }: LoaderFunctionArgs) {
     return redirect(url.toString());
   }
 
-  return null;
+  return json({ tableData });
 }
 
 export default function Reports() {
+  const { tableData: data } = useLoaderData<typeof loader>();
+
   return (
     <div className="bg-gray-200 flex h-screen w-full flex-col gap-3 justify-start items-start p-5">
       <Breadcrumb>
@@ -95,12 +102,20 @@ export default function Reports() {
 
       <h1 className="text-2xl font-bold text-gray-700">Reports</h1>
 
-      <div className="flex space-x-1 p-1 border border-gray-300 rounded-md">
-        <DatePicker />
-        <AgentsFilter />
-        <StatusFilter />
-        <TeamsFilter />
+      <div className="flex w-full justify-between ">
+        <div className="flex space-x-1 border p-1 border-gray-300 rounded-md">
+          <DatePicker />
+          <QueuesFilter />
+          <AgentsFilter />
+          <TeamsFilter />
+          <StatusFilter />
+        </div>
+
+        <span className="font-extralight tracking-tight">
+          {data?.length || "No"} results found
+        </span>
       </div>
+      <DataTable columns={columns} data={data} />
     </div>
   );
 }

@@ -4,10 +4,10 @@ import {
   PopoverContent,
 } from "~/components/ui/popover";
 
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "~/components/ui/checkbox";
 
 import { useSearchParams } from "@remix-run/react";
-import {
+import type {
   DropdownListProps,
   DropdownMenuCheckboxesProps,
   GroupedListItem,
@@ -23,7 +23,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandEmpty,
-} from "../ui/command";
+} from "~/components/ui/command";
 import TriggerButton from "../TriggerButton";
 
 export function MultiSelectFilter({

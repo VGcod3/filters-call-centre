@@ -1,7 +1,7 @@
 import { Separator } from "~/components/ui/separator";
 import { useSearchParams } from "@remix-run/react";
 import { useState } from "react";
-import { Badge } from "../ui/badge";
+import { Badge } from "~/components/ui/badge";
 import type {
   GroupedList,
   GroupedListItem,
@@ -11,7 +11,7 @@ import type {
 
 export const useMultiSelect = (
   name: string,
-  dataList: GroupedListItem[] | ListItem[]
+  dataList: GroupedListItem[] | ListItem[],
 ) => {
   const [open, setOpen] = useState(false);
 

@@ -1,6 +1,6 @@
 import { UsersIcon } from "lucide-react";
 import { MultiSelectFilter } from "./MultiSelectFilter";
-import { ListItem } from "./types";
+import type { ListItem } from "./types";
 
 const teams: ListItem[] = [
   "No teams asigned",

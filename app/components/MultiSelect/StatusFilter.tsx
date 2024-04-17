@@ -1,6 +1,6 @@
 import { PhoneIcon } from "lucide-react";
 import { MultiSelectFilter } from "./MultiSelectFilter";
-import { GroupedListItem } from "./types";
+import type { GroupedListItem } from "./types";
 
 const groupedStatuses: GroupedListItem[] = [
   {
