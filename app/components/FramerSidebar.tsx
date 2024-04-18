@@ -45,7 +45,7 @@ const FramerSidebar = ({ isOpen, setIsOpen }: FramerSidebarProps) => {
       <motion.nav
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        initial={{ width: "300px", translateX: "-100%" }}
+        initial={{ width: "300px", translateX: isRTL ? "100%" : "-100%"}}
         animate={{
           width: "300px",
           translateX: isOpen 
