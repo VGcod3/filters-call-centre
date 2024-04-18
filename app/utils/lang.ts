@@ -1,15 +1,15 @@
-enum LanguageDirection {
-    RTL = "rtl",
-    LTR = "ltr",
-  }
+export enum LanguageDirection {
+  RTL = "rtl",
+  LTR = "ltr",
+}
   
-  type Language = {
-    key: string;
-    value: string;
-    dir: string;
-  };
+type Language = {
+  key: string;
+  value: string;
+  dir: string;
+};
   
-  export const Lang: Language[] = [
+export const Lang: Language[] = [
     {
       key: "en",
       value: "English",
@@ -20,4 +20,4 @@ enum LanguageDirection {
       value: "Hebrew",
       dir: LanguageDirection.RTL,
     },
-  ];
+];
