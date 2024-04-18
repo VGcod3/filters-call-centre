@@ -33,8 +33,8 @@ export default function Index() {
       </Button>
 
       <Button variant={"outline"}>
-        <Link prefetch="intent" to={"/languages"}>
-          i18n
+        <Link prefetch="intent" to={"/sidebar"}>
+          Sidebar(framer)
         </Link>
       </Button>
 

@@ -7,7 +7,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
-import { Lang } from "./lang";
+import { Lang } from "./utils/lang";
 import "./globals.css";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import i18next, { i18nCookie } from "./i18next.server";
