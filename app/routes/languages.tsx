@@ -12,6 +12,8 @@ export const meta: MetaFunction = () => {
 
 export default function Languages() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isTransition, setIsTransition] = useState(false);
+
   const isRTL = useDirection();
 
   return (
@@ -20,11 +22,18 @@ export default function Languages() {
       const windowWidth = window.innerWidth;
       const edgeThreshold = 10;
 
-      !isRTL && x <= edgeThreshold && setIsOpen(true);
-      isRTL && x >= windowWidth - edgeThreshold && setIsOpen(true);
+      if(!isRTL && x <= edgeThreshold){
+        setIsOpen(true);
+        setIsTransition(true);
+      }
+
+      if(isRTL && x >= windowWidth - edgeThreshold){
+        setIsOpen(true);
+        setIsTransition(true);
+      }
 
     }} className="bg-gray-200 flex flex-col gap-5 h-screen w-full justify-start items-start p-5">
-        <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+        <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} isTransition={isTransition} setIsTransition={setIsTransition} />
     </div>
   );
 }
