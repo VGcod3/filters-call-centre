@@ -2,6 +2,9 @@ import type { MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import { PureSidebar } from "~/components/PureSidebar";
 import { useDirection } from "~/utils/useDirection";
+import { Link } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
+import { Button } from "~/components/ui/button";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,6 +18,8 @@ export default function Languages() {
   const [isTransition, setIsTransition] = useState(false);
 
   const isRTL = useDirection();
+  const { i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div onMouseMove={(event) => {
