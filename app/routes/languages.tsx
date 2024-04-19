@@ -2,6 +2,10 @@ import type { MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import { PureSidebar } from "~/components/PureSidebar";
 import { useDirection } from "~/utils/useDirection";
+import { Link } from "@remix-run/react";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
+import { Button } from "~/components/ui/button";
 
 export const meta: MetaFunction = () => {
   return [
@@ -13,6 +17,8 @@ export const meta: MetaFunction = () => {
 export default function Languages() {
   const [isOpen, setIsOpen] = useState(false);
   const isRTL = useDirection();
+  const { i18n } = useTranslation();
+  const { t }: {t: TFunction} = useTranslation();
 
   return (
     <div onMouseMove={(event) => {
