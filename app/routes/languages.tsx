@@ -1,6 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
-import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
 
@@ -13,12 +12,12 @@ export const meta: MetaFunction = () => {
 
 export default function Languages() {
   const { i18n } = useTranslation();
-  const { t }: {t: TFunction} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div className="bg-gray-200 flex">
       <div className="w-[100px] h-[100vh] bg-red-500">
-        <p>{t("text")}</p>
+        <p>Header</p>
         <p>{t("description")}</p>
       </div>
       <div className="flex items-center justify-center w-full">
