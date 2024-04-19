@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FramerSidebar } from "~/components/FramerSidebar";
 import { useDirection } from "~/utils/useDirection";
 import { Link } from "@remix-run/react";
-import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Button } from "~/components/ui/button";
 
@@ -18,7 +17,7 @@ export default function Languages() {
   const [isOpen, setIsOpen] = useState(false);
   const isRTL = useDirection();
   const { i18n } = useTranslation();
-  const { t }: {t: TFunction} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <div onMouseMove={(event) => {
