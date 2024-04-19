@@ -8,7 +8,7 @@ import {
 } from "@remix-run/react";
 import { useChangeLanguage } from "remix-i18next/react";
 import { useTranslation } from "react-i18next";
-import i18next from "~/i18next.server";
+import {i18next, i18nCookie} from "~/i18next.server";
 import { Lang } from "./lang";
 import "./globals.css";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
@@ -19,26 +19,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json(
     { locale },
     {
-      headers: {
-        "Set-Cookie": `lang=${locale}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${
-          60 * 60 * 24 * 30
-        }`,
-      },
+      headers: { "Set-Cookie": await i18nCookie.serialize(locale) },
     }
   );
 }
 
-export const handle = {
-  i18n: "common",
-};
-
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { locale } = useLoaderData<{ locale: string | undefined }>();
+  const { locale } = useLoaderData<typeof loader>();
   const { i18n } = useTranslation();
 
-  if (!locale) {
-    return null;
-  }
   useChangeLanguage(locale);
 
   const currentLanguage = Lang.find((lang) => lang.key === i18n.language);

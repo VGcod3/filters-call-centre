@@ -26,13 +26,13 @@ const RoundButton = ({ children, className, ...props }: RoundButtonProps) => {
 export default function Index() {
   return (
     <div className="bg-gray-200 flex flex-col gap-5 h-screen w-full justify-start items-start p-5">
-      <Button variant={"outline"}>
+      <Button variant={"outline"} asChild>
         <Link prefetch="intent" to={"/reports"}>
           go to reports
         </Link>
       </Button>
 
-      <Button variant={"outline"}>
+      <Button variant={"outline"} asChild>
         <Link prefetch="intent" to={"/languages"}>
           i18n
         </Link>
