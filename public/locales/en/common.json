@@ -1,5 +1,5 @@
 {
-	"text": "Random text",
-	"description": "Random description",
-	"header": "Content of pure sidebar"
+	"sidebar": {
+		"language": "Language"
+	}
 }

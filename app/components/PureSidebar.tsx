@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { PanelsTopLeft, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useTranslation } from "react-i18next";
 import {useDirection} from "~/utils/useDirection";
-import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
+import { Link } from "@remix-run/react";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -15,8 +15,9 @@ interface SidebarProps {
 
 export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }: SidebarProps) => {
   const [isFull, setIsFull] = useState(false);
-  const { i18n } = useTranslation();
   const isRTL = useDirection();
+  const {t} = useTranslation();
+  const { i18n } = useTranslation();
 
   const handleMouseEnter = () => {
     if (!isFull) {
@@ -52,7 +53,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2",
+          "w-[288px] border border-gray-300 border-r-2 pr-6 pl-6",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -72,7 +73,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="relative w-full">
+        <div className="relative w-full h-full flex flex-col">
           <div className="flex justify-between" >
             {isFull && (
             <Button
@@ -88,15 +89,29 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
             </Button>
           )}
           </div>
-          <div className="flex items-center justify-center w-full">
-            <Button asChild className="bg-red-500" onClick={() => {
-              setIsTransition(false);
-              !isFull && setIsOpen(false);
-            }}>
+          <div className="flex items-center justify-between pb-3 border-b border-gray-300">
+              <p className="text-gray-500 font-medium">{t("sidebar.language")}</p>
+              <label className="relative cursor-pointer" htmlFor="language">
                 <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
-                    Switch
+                  <input 
+                    type="checkbox" 
+                    onClick={() => {
+                      setIsTransition(false);
+                      !isFull && setIsOpen(false);
+                    }} 
+                    className="sr-only peer"
+                    checked={isRTL}
+                    onChange={() => {}}
+                    id="language"
+                    />
+                  <div className={cn(
+                    "w-[56px] h-7 text-[13px] flex items-center bg-gray-100 border border-gray-300 rounded-full text-white after:flex after:items-center after:justify-center peer peer-checked:after:translate-x-full after:absolute after:left-[3px] after:bg-blue-600 after:border after:border-gray-300 after:rounded-full after:h-6 after:w-6 after:transition-all",
+                    !isRTL ? "peer after:content-['EN']" : "peer after:content-['HE']"
+                  )} >
+                    <span className={cn("absolute text-black", isRTL ? 'left-2' : 'right-2' )} >{isRTL ? "EN" : "HE"}</span>
+                  </div>
                 </Link>
-            </Button>
+            </label>
           </div>
         </div>
       </nav>
