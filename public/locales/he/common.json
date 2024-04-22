@@ -1,5 +1,10 @@
 {
-	"text": "טקסט אקראי",
-	"description": "תיאור אקראי",
-	"header": "תוכן של סרגל צד טהור"
+	"sidebar": {
+		"navigation": {
+			"dashboards": "לוחות מחוונים",
+			"users": "משתמשים",
+			"settings": "הגדרות",
+			"reports": "דיווחים"
+		}
+	}
 }

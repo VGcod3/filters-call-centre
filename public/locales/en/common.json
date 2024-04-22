@@ -1,5 +1,10 @@
 {
-	"text": "Random text",
-	"description": "Random description",
-	"header": "Content of pure sidebar"
+	"sidebar": {
+		"navigation": {
+			"dashboards": "Dashboards",
+			"users": "Users",
+			"settings": "Settings",
+			"reports": "Reports"
+		}
+	}
 }

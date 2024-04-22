@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {useDirection} from "~/utils/useDirection";
 import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
+import { NavigationMenu } from "./Sidebar/NavigationMenu";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2",
+          "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -98,6 +99,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
                 </Link>
             </Button>
           </div>
+          <NavigationMenu />
         </div>
       </nav>
     </div>
