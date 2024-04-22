@@ -1,5 +1,6 @@
 {
 	"sidebar": {
-		"language": "Language"
+		"language": "Language",
+		"logout": "Logout"
 	}
 }

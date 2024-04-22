@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PanelsTopLeft, XIcon } from "lucide-react";
+import { LogOut, PanelsTopLeft, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import {useDirection} from "~/utils/useDirection";
 import { cn } from "~/lib/utils";
@@ -114,6 +114,12 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
                   </div>
                 </Link>
             </label>
+          </div>
+          <div className="flex justify-start" >
+            <Button variant="ghost" className="pl-0 pr-0" >
+              {t("sidebar.logout")}
+              <LogOut className="ml-2" />
+            </Button>
           </div>
         </div>
       </nav>
