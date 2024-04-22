@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {useDirection} from "~/utils/useDirection";
 import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
+import { Avatar, AvatarFallback } from "./ui/avatar";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2",
+          "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -73,7 +74,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
         onMouseLeave={handleMouseLeave}
       >
         <div className="relative w-full">
-          <div className="flex justify-between" >
+        <div className="flex justify-between" >
             {isFull && (
             <Button
               size="icon"
@@ -87,6 +88,19 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               <XIcon />
             </Button>
           )}
+          </div>
+          <div className="flex items-center w-full pt-10" >
+            <Avatar className="w-12 h-12" >
+              <AvatarFallback className="bg-gray-800 text-white font-semibold" >SW</AvatarFallback>
+            </Avatar>
+            <div className={"px-4 transition-all duration-500 whitespace-nowrap"}>
+              <h2 className="text-gray-900 font-semibold leading-6 text-lg">
+                Sarah Wilson
+              </h2>
+              <h1 className="text-gray-900 font-normal opacity-80 leading-4 text-sm">
+                Admin
+              </h1>
+            </div>
           </div>
           <div className="flex items-center justify-center w-full">
             <Button asChild className="bg-red-500" onClick={() => {
