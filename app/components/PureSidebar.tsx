@@ -92,13 +92,15 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
           <div className="flex items-center justify-between pb-3 border-b border-gray-300">
               <p className="text-gray-500 font-medium">{t("sidebar.language")}</p>
               <label className="relative cursor-pointer" htmlFor="language">
-                <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
-                  <input 
-                    type="checkbox" 
+                <Link 
+                    to={`?lng=${i18n.language === "en" ? "he" : "en"}`} 
                     onClick={() => {
                       setIsTransition(false);
                       !isFull && setIsOpen(false);
-                    }} 
+                    }}
+                >
+                  <input 
+                    type="checkbox" 
                     className="sr-only peer"
                     checked={isRTL}
                     onChange={() => {}}
