@@ -115,7 +115,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
                 </Link>
             </label>
           </div>
-          <div className="flex justify-start" >
+          <div className="flex justify-start mt-1" >
             <Button variant="ghost" className="pl-0 pr-0" >
               {t("sidebar.logout")}
               <LogOut className="ml-2" />
