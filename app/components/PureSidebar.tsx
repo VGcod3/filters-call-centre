@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PanelsTopLeft, XIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import {useDirection} from "~/utils/useDirection";
@@ -16,6 +16,7 @@ interface SidebarProps {
 
 export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }: SidebarProps) => {
   const [isFull, setIsFull] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const { i18n } = useTranslation();
   const isRTL = useDirection();
 
@@ -24,12 +25,14 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
       setIsOpen(true);
     }
     setIsTransition(true);
+    setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
     if (!isFull) {
       setIsOpen(false);
     }
+    setIsHovered(false);
   };
 
   return (
@@ -73,23 +76,8 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="relative w-full">
-        <div className="flex justify-between" >
-            {isFull && (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => {
-                setIsFull(false);
-                setIsOpen(false);
-                setIsTransition(true);
-              }}
-            >
-              <XIcon />
-            </Button>
-          )}
-          </div>
-          <div className="flex items-center w-full pt-10" >
+        <div className="flex justify-between pt-10 items-center" >
+          <div className="flex items-center w-full" >
             <Avatar className="w-12 h-12" >
               <AvatarFallback className="bg-gray-800 text-white font-semibold" >SW</AvatarFallback>
             </Avatar>
@@ -102,6 +90,20 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               </h1>
             </div>
           </div>
+          {isFull && isHovered && (
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => {
+                setIsFull(false);
+                setIsOpen(false);
+                setIsTransition(true);
+              }}
+            >
+              {isRTL ? <ChevronRight /> : <ChevronLeft />}
+            </Button>
+          )}
+        </div>
           <div className="flex items-center justify-center w-full">
             <Button asChild className="bg-red-500" onClick={() => {
               setIsTransition(false);
@@ -112,7 +114,6 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
                 </Link>
             </Button>
           </div>
-        </div>
       </nav>
     </div>
   );
