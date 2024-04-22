@@ -16,7 +16,6 @@ interface SidebarProps {
 export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }: SidebarProps) => {
   const [isFull, setIsFull] = useState(false);
   const { i18n } = useTranslation();
-  const { t } = useTranslation();
   const isRTL = useDirection();
 
   const handleMouseEnter = () => {
@@ -53,7 +52,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[300px]",
+          "w-[288px] border border-gray-300 border-r-2",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -63,9 +62,9 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
             : isRTL 
               ? "translate-x-[100%]" 
               : "translate-x-[-100%]",
-          "fixed bg-[#d1d1d1] overflow-hidden",
+          "fixed bg-white overflow-hidden",
           isFull ? "top-0" : "top-[8%]",
-          isFull ? "bottom-0" : "bottom-[8%]",
+          isFull ? "bottom-0" : "bottom-[1%]",
           isTransition && "transition-all duration-500 ease-in-out",
           !isFull && "rounded-xl",
           isRTL ? 'right-0' : 'left-0'
@@ -75,7 +74,6 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
       >
         <div className="relative w-full">
           <div className="flex justify-between" >
-            <h2 className="text-xl" >{t("header")}</h2>
             {isFull && (
             <Button
               size="icon"
@@ -100,8 +98,6 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
                 </Link>
             </Button>
           </div>
-          <p>{t("text")}</p>
-          <p>{t("description")}</p>
         </div>
       </nav>
     </div>
