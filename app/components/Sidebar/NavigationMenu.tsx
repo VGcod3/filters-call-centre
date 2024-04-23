@@ -49,13 +49,13 @@ export const NavigationMenu = () => {
                     <p className={cn(isRTL ? "mr-2" : 'ml-2')}>{item.title}</p>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="p-2 text-gray-500 font-semibold">
+                <AccordionContent className="pl-3 text-gray-500 font-semibold">
                   {item.subLinks?.map(subItem => (
                     <NavLink
                       key={subItem.id}
                       to={subItem.to}
                       className={({ isActive }) =>
-                        cn("flex w-full pb-2 pt-2 pl-7 font-semibold",
+                        cn("flex w-full pb-2 pt-2 pl-4 font-semibold",
                           isActive ? "border-l-2 border-blue-600 text-blue-600" : "border-l border-gray-400"
                         )
                       }
