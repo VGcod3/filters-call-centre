@@ -12,6 +12,9 @@ import {i18next, i18nCookie} from "~/i18next.server";
 import { Lang } from "./utils/lang";
 import "./globals.css";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { useState } from "react";
+import { useDirection } from "./utils/useDirection";
+import { PureSidebar } from "./components/PureSidebar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = await i18next.getLocale(request);
@@ -31,6 +34,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   useChangeLanguage(locale);
 
   const currentLanguage = Lang.find((lang) => lang.key === i18n.language);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isTransition, setIsTransition] = useState(false);
+
+  const isRTL = useDirection();
   return (
     <html lang={locale} dir={currentLanguage?.dir}>
       <head>
@@ -40,6 +47,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+      <div onMouseMove={(event) => {
+      const x = event.clientX;
+      const windowWidth = window.innerWidth;
+      const edgeThreshold = 10;
+
+      if(!isRTL && x <= edgeThreshold){
+        setIsOpen(true);
+        setIsTransition(true);
+      }
+
+      if(isRTL && x >= windowWidth - edgeThreshold){
+        setIsOpen(true);
+        setIsTransition(true);
+      }
+
+    }} >
+      <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} isTransition={isTransition} setIsTransition={setIsTransition} />
+    </div>
         {children}
         <ScrollRestoration />
         <Scripts />

@@ -4,7 +4,15 @@
 			"dashboards": "Dashboards",
 			"users": "Users",
 			"settings": "Settings",
-			"reports": "Reports"
+			"reports": {
+				"title": "Reports",
+				"subLinks": {
+					"agentPerformanceReport": "Agent Performance Report",
+					"queuePerformanceReport": "Queue Performance Report",
+					"agentCallReport": "Agent Call Report",
+					"abandonedCallsReport": "Abandoned Calls Report"
+				}
+			}
 		}
 	}
 }

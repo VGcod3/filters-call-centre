@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Link, Outlet } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import { PhoneCallIcon } from "lucide-react";
 import { PropsWithChildren } from "react";
 

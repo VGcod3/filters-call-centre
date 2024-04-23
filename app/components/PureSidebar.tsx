@@ -53,7 +53,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6",
+          "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6 z-50",
           isOpen
             ? isFull
               ? "translate-x-0"

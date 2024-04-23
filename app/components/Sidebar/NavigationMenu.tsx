@@ -1,76 +1,87 @@
-import { ChevronDownIcon, ClipboardList, PieChartIcon, Settings, UsersRound } from "lucide-react"
-import { Button } from "../ui/button";
+import { ClipboardList, PieChartIcon, Settings, UsersRound } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import { cn } from "~/lib/utils";
-import { Link, NavLink } from "@remix-run/react";
+import { NavLink } from "@remix-run/react";
 import { useDirection } from "~/utils/useDirection";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+
+interface SubLinksProps {
+    to: string;
+    title: string;
+    id: number;
+}
 
 interface NavigationProps {
     id: number;
     title: string;
-    icon: any;
+    icon: React.ElementType; 
     to: string;
+    subLinks?: SubLinksProps[];
 }
 
-
 export const NavigationMenu = () => {
-    const {t} = useTranslation();
-    const isRTL = useDirection();
+  const { t } = useTranslation();
+  const isRTL = useDirection();
+  const NavigationArr: NavigationProps[] = [
+    { id: 1, title: t('sidebar.navigation.dashboards'), icon: PieChartIcon, to: '/dashboards' },
+    { id: 2, title: t('sidebar.navigation.users'), icon: UsersRound, to: '/users' },
+    { id: 3, title: t('sidebar.navigation.settings'), icon: Settings, to: '/reports' },
+    {
+      id: 4, title: t('sidebar.navigation.reports.title'), icon: ClipboardList, to: '/', subLinks: [
+        { to: '/performance-report', title: t("sidebar.navigation.reports.subLinks.agentPerformanceReport"), id: 1 },
+        { to: '/queue-performance', title: t("sidebar.navigation.reports.subLinks.queuePerformanceReport"), id: 2 },
+        { to: '/agent-call', title: t("sidebar.navigation.reports.subLinks.agentCallReport"), id: 3 },
+        { to: '/abandoned-calls', title: t("sidebar.navigation.reports.subLinks.abandonedCallsReport"), id: 4 },
+      ]
+    }
+  ]
 
-    const NavigationArr: NavigationProps[] = [
-        {id: 1, title: t('sidebar.navigation.dashboards'), icon: PieChartIcon, to: '/dashboards'},
-        {id: 2, title: t('sidebar.navigation.users'), icon: UsersRound, to: '/users'},
-        {id: 3, title: t('sidebar.navigation.settings'), icon: Settings, to: '/settings'},
-        {id: 4, title: t('sidebar.navigation.reports'), icon: ClipboardList, to: '/reports'}
-    ]
-    return (
-        <div>
-            {
-                NavigationArr.map((item, index) => {
-                    if(NavigationArr.length - 1 !== index){
-                        return <NavLink onClick={e => e.preventDefault()} to={item.to} key={item.id} className={({isActive}) => cn("flex items-center text-gray-600 mb-[20px]", isActive && "font-semibold text-gray-900")} >
-                        <item.icon />
-                        <p className={cn(isRTL ? "mr-2" : 'ml-2')} >{item.title}</p>
+  return (
+    <div>
+      {NavigationArr.map((item) => (
+        <div key={item.id}>
+          {item.subLinks ? (
+            <Accordion type="single" collapsible>
+              <AccordionItem value={item.title}>
+                <AccordionTrigger className="py-0 hover:no-underline text-md [&[data-state=open]>div]:font-semibold [&[data-state=open]>div]:text-gray-900">
+                  <div className="flex text-gray-600 pb-2 font-normal">
+                    <item.icon />
+                    <p className={cn(isRTL ? "mr-2" : 'ml-2')}>{item.title}</p>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-2 text-gray-500 font-semibold">
+                  {item.subLinks?.map(subItem => (
+                    <NavLink
+                      key={subItem.id}
+                      to={subItem.to}
+                      className={({ isActive }) =>
+                        cn("flex w-full pb-2 pt-2 pl-7 font-semibold",
+                          isActive ? "border-l-2 border-blue-600 text-blue-600" : "border-l border-gray-400"
+                        )
+                      }
+                    >
+                      {subItem.title}
                     </NavLink>
-                    } else{
-                        return <div key={item.id} >
-                             <Accordion type="single" collapsible>
-                                <AccordionItem value={item.title}>
-                                    <AccordionTrigger isNan={false} className="py-0 hover:no-underline">
-                                        <Button  className="pl-0 bg-transparent font-normal text-md hover:bg-transparent" variant="ghost">
-                                            <item.icon className="text-gray-600 hover:text-gray-600" />
-                                            <p className={cn(isRTL ? "mr-2" : 'ml-2')} >{item.title}</p>
-                                        </Button>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="pl-7 text-gray-500" >
-                                        <div className="w-full mt-5" >
-                                            <NavLink to='/' className="w-full">
-                                             Agent Performance Report
-                                            </NavLink>
-                                        </div>
-                                        <div className="w-full mt-5" >
-                                            <NavLink to='/'>
-                                                Queue Performance Report
-                                            </NavLink>
-                                        </div>
-                                        <div className="w-full mt-5" >
-                                        <NavLink to='/'>
-                                            Agent Call Report
-                                        </NavLink>
-                                        </div>
-                                        <div className="w-full mt-5" >
-                                        <NavLink to='/'>
-                                            Abandoned Calls Report
-                                        </NavLink>
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            </Accordion>
-                        </div>
-                    }
-                })
-            }
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : (
+            <NavLink
+              to={item.to}
+              key={item.id}
+              className={({ isActive }) =>
+                cn("flex items-center text-gray-600 mb-[20px]",
+                  isActive && "font-semibold text-gray-900"
+                )
+              }
+            >
+              <item.icon />
+              <p className={cn(isRTL ? "mr-2" : 'ml-2')}>{item.title}</p>
+            </NavLink>
+          )}
         </div>
-    )
+      ))}
+    </div>
+  )
 }

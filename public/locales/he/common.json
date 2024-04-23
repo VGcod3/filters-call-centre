@@ -4,7 +4,15 @@
 			"dashboards": "לוחות מחוונים",
 			"users": "משתמשים",
 			"settings": "הגדרות",
-			"reports": "דיווחים"
+			"reports": {
+				"title": "דיווחים",
+				"subLinks": {
+					"agentPerformanceReport": "דוח ביצועי סוכן",
+					"queuePerformanceReport": "דוח ביצועים בתור",
+					"agentCallReport": "דוח שיחות לסוכן",
+					"abandonedCallsReport": "דוח שיחות נטושות"
+				}
+			}
 		}
 	}
 }
