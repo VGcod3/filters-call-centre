@@ -89,15 +89,15 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
             </Button>
           )}
           </div>
-          <div className="flex items-center w-full pt-10" >
+          <div className="flex gap-4 mt-10" >
             <Avatar className="w-12 h-12" >
               <AvatarFallback className="bg-gray-800 text-white font-semibold" >SW</AvatarFallback>
             </Avatar>
-            <div className={"px-4 transition-all duration-500 whitespace-nowrap"}>
-              <h2 className="text-gray-900 font-semibold leading-6 text-lg">
+            <div className="whitespace-nowrap overflow-hidden">
+              <h2 className="text-gray-900 text-[16px] font-semibold overflow-hidden overflow-ellipsis">
                 Sarah Wilson
               </h2>
-              <h1 className="text-gray-900 font-normal opacity-80 leading-4 text-sm">
+              <h1 className="text-gray-900 opacity-80 text-sm">
                 Admin
               </h1>
             </div>
