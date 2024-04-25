@@ -93,7 +93,6 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               <p className="text-gray-500 font-medium">{t("sidebar.language.title")}</p>
               <LanguageSwitcher />
           </div>
-          <Switch />
         </div>
       </nav>
     </div>
