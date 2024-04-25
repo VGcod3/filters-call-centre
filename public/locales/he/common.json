@@ -1,5 +1,9 @@
 {
 	"sidebar": {
-		"language": "שפה"
+		"language": {
+			"title": "שפה",
+			"en": "EN",
+			"he": "עב"
+		}
 	}
 }

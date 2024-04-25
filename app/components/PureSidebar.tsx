@@ -89,7 +89,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
           )}
           </div>
           <div className="flex items-center justify-between pb-3 border-b border-gray-300">
-              <p className="text-gray-500 font-medium">{t("sidebar.language")}</p>
+              <p className="text-gray-500 font-medium">{t("sidebar.language.title")}</p>
               <LanguageSwitcher />
           </div>
         </div>
