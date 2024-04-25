@@ -5,6 +5,7 @@ import {useDirection} from "~/utils/useDirection";
 import { cn } from "~/lib/utils";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { Switch } from "./ui/switch";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -92,6 +93,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               <p className="text-gray-500 font-medium">{t("sidebar.language.title")}</p>
               <LanguageSwitcher />
           </div>
+          <Switch />
         </div>
       </nav>
     </div>
