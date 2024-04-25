@@ -48,23 +48,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
       <div onMouseMove={(event) => {
-      const x = event.clientX;
-      const windowWidth = window.innerWidth;
-      const edgeThreshold = 10;
+        const x = event.clientX;
+        const windowWidth = window.innerWidth;
+        const edgeThreshold = 30;
 
-      if(!isRTL && x <= edgeThreshold){
-        setIsOpen(true);
-        setIsTransition(true);
-      }
+        if(!isRTL && x <= edgeThreshold){
+          setIsOpen(true);
+          setIsTransition(true);
+        }
 
-      if(isRTL && x >= windowWidth - edgeThreshold){
-        setIsOpen(true);
-        setIsTransition(true);
-      }
-
-    }} >
-      <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} isTransition={isTransition} setIsTransition={setIsTransition} />
-    </div>
+        if(isRTL && x >= windowWidth - edgeThreshold){
+          setIsOpen(true);
+          setIsTransition(true);
+        }
+      }} className="h-screen" >
+        <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} isTransition={isTransition} setIsTransition={setIsTransition} />
+      </div>
         {children}
         <ScrollRestoration />
         <Scripts />
