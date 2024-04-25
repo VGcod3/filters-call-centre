@@ -3,8 +3,8 @@ import { PanelsTopLeft, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import {useDirection} from "~/utils/useDirection";
 import { cn } from "~/lib/utils";
-import { Link } from "@remix-run/react";
 import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,7 +17,6 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
   const [isFull, setIsFull] = useState(false);
   const isRTL = useDirection();
   const {t} = useTranslation();
-  const { i18n } = useTranslation();
 
   const handleMouseEnter = () => {
     if (!isFull) {
@@ -91,29 +90,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
           </div>
           <div className="flex items-center justify-between pb-3 border-b border-gray-300">
               <p className="text-gray-500 font-medium">{t("sidebar.language")}</p>
-              <label className="relative cursor-pointer" htmlFor="language">
-                <Link 
-                    to={`?lng=${i18n.language === "en" ? "he" : "en"}`} 
-                    onClick={() => {
-                      setIsTransition(false);
-                      !isFull && setIsOpen(false);
-                    }}
-                >
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer"
-                    checked={isRTL}
-                    onChange={() => {}}
-                    id="language"
-                    />
-                  <div className={cn(
-                    "w-[56px] h-7 text-[13px] flex items-center bg-gray-100 border border-gray-300 rounded-full text-white after:flex after:items-center after:justify-center peer peer-checked:after:translate-x-full after:absolute after:left-[3px] after:bg-blue-600 after:border after:border-gray-300 after:rounded-full after:h-6 after:w-6 after:transition-all",
-                    !isRTL ? "peer after:content-['EN']" : "peer after:content-['HE']"
-                  )} >
-                    <span className={cn("absolute text-black", isRTL ? 'left-2' : 'right-2' )} >{isRTL ? "EN" : "HE"}</span>
-                  </div>
-                </Link>
-            </label>
+              <LanguageSwitcher />
           </div>
         </div>
       </nav>
