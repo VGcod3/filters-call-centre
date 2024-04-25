@@ -5,7 +5,6 @@ import {useDirection} from "~/utils/useDirection";
 import { cn } from "~/lib/utils";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { Switch } from "./ui/switch";
 
 interface SidebarProps {
   isOpen: boolean;
