@@ -1,3 +1,4 @@
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -66,10 +67,20 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "slide-in-down": {
+          "0%": {transform: "translateY(0%)", transformOrigin: "top"},
+          "10%": {transform: "translateY(20%)", transformOrigin: "top"},
+        },
+        "slide-in-up": {
+          "0%": {transform: "translateY(40%)",  transformOrigin: "top"},
+          "100%": {transform: "translateY(0%)",  transformOrigin: "top"},
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-in-up": "slide-in-up 0.4s ease-out",
+        "slide-in-down": "slide-in-down 0.4s ease-out",
       },
     },
   },
