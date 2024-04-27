@@ -1,6 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
-import { useState } from "react";
-import { PureSidebar } from "~/components/PureSidebar";
+import { useReducer } from "react";
+import { PureSidebar, sidebarReducer } from "~/components/PureSidebar";
 import { useDirection } from "~/utils/useDirection";
 
 export const meta: MetaFunction = () => {
@@ -11,8 +11,12 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Languages() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isTransition, setIsTransition] = useState(false);
+  const [state, dispatch] = useReducer(sidebarReducer, {
+    isOpen: false,
+    isTransition: false,
+    isFull: false,
+    isHovered: false,
+  });
 
   const isRTL = useDirection();
 
@@ -23,17 +27,15 @@ export default function Languages() {
       const edgeThreshold = 10;
 
       if(!isRTL && x <= edgeThreshold){
-        setIsOpen(true);
-        setIsTransition(true);
+        dispatch({type: "OPEN_SIDEBAR"});
       }
 
       if(isRTL && x >= windowWidth - edgeThreshold){
-        setIsOpen(true);
-        setIsTransition(true);
+        dispatch({type: "OPEN_SIDEBAR"});
       }
 
     }} className="bg-gray-200 flex flex-col gap-5 h-screen w-full justify-start items-start p-5">
-        <PureSidebar isOpen={isOpen} setIsOpen={setIsOpen} isTransition={isTransition} setIsTransition={setIsTransition} />
+        <PureSidebar state={state} dispatch={dispatch} />
     </div>
   );
 }
