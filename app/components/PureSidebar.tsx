@@ -50,7 +50,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2",
+          "w-[288px]",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -65,7 +65,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
           isFull ? "bottom-0" : "bottom-[1%]",
           isTransition && "transition-all duration-500 ease-in-out",
           !isFull && "rounded-xl",
-          isRTL ? 'right-0' : 'left-0'
+          isRTL ? 'right-0 border-l-2 border-gray-300' : 'left-0 border-r-2 border-gray-300'
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

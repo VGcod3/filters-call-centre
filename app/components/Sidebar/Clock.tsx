@@ -42,24 +42,18 @@ export const Clock = () => {
   }, []);
 
   return (
-    <div
-      className={"flex items-center justify-center w-full"}
-    >
       <div
-        className={"flex flex-col w-full items-center justify-center rounded bg-[#EAECF0] gap-2 p-4"}
+        className={"flex flex-col w-full items-center justify-center rounded bg-[#EAECF0] py-4 gap-[11px] text-gray-900 "}
       >
         <p
-          className={"text-black leading-none font-bold text-3xl"}
+          className={"font-semibold text-3xl"}
         >
           {time.format("HH:mm:ss")}
         </p>
-        <div className="flex items-center">
-          <CalendarDays className="w-4 h-4 text-[#101828] mr-2" />
-          <p className="text-[#101828]">
-            {time.format("MMM DD YYYY")}
-          </p>
+        <div className="flex items-center text-sm gap-1">
+          <CalendarDays className="w-4 h-4" />
+          {time.format("MMM DD YYYY")}
         </div>
       </div>
-    </div>
   );
 };
