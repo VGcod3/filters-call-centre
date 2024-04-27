@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PanelsTopLeft, XIcon } from "lucide-react";
+import { LogOut, PanelsTopLeft, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import {useDirection} from "~/utils/useDirection";
 import { cn } from "~/lib/utils";
@@ -92,6 +92,12 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               <p className="text-gray-500 font-medium">{t("sidebar.language.title")}</p>
               <LanguageSwitcher />
           </div>
+          <div className="mt-2" >
+            <Button variant="ghost" dir="rtl" className='pl-0 pr-0  gap-2'>
+              {t("sidebar.logout")}
+              <LogOut />
+            </Button>
+        </div>
         </div>
       </nav>
     </div>
