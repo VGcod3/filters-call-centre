@@ -84,19 +84,19 @@ export const NavigationMenu = () => {
               key={item.id}
               className={({ isActive }) =>
                 cn(buttonVariants({variant: "ghost"}),
-                  "w-full justify-start",
+                  "w-full justify-start gap-2",
                   isActive ? "font-semibold text-gray-900" : "text-gray-600"
                 )
               }
             >
               <item.icon />
-              <p className={cn(isRTL ? "mr-2" : "ml-2")}>{item.title}</p>
+              {item.title}
           </NavLink>
         </div>
       ))}
-      <Button variant="ghost" className={cn("justify-start w-full text-gray-600", isOpen && "text-gray-900 font-semibold")} onClick={toggleOpen} >
+      <Button variant="ghost" className={cn("justify-start w-full text-gray-600 gap-2", isOpen && "text-gray-900 font-semibold")} onClick={toggleOpen} >
         <ClipboardList />
-        <p className={cn(isRTL ? "mr-2" : "ml-2")}>{t("sidebar.navigation.reports.title")}</p>
+        {t("sidebar.navigation.reports.title")}
       </Button>
       <div className={cn("text-gray-500 font-semibold pt-4 grid transition-all duration-200 ease-in-out",
           isOpen ? "animate-slide-in-down grid-rows-[1fr] opacity-100"  : "animate-slide-in-up grid-rows-[0fr] opacity-0",
