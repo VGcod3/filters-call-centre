@@ -32,7 +32,7 @@ export const sidebarReducer = (state: SidebarState, action: SidebarAction): Side
     case "CLOSE_SIDEBAR":
       return { ...state, isOpen: false, isFull: false };
     case "FULL_OPEN":
-      return { ...state, isFull: true};
+      return { ...state, isFull: true, isOpen: true};
     case "STOP_TRANSITION": 
       return { ...state, isTransition: false };
     case "CLOSE_SIDEBAR_NOT_FULL": 
