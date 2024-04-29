@@ -93,9 +93,9 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
               <LanguageSwitcher />
           </div>
           <div className="mt-2" >
-            <Button variant="ghost" dir="rtl" className='pl-0 pr-0  gap-2'>
+            <Button variant="ghost" className="pl-0 pr-0 gap-2">
               {t("sidebar.logout")}
-              <LogOut />
+              <LogOut className={cn(!isRTL && "rotate-180")} />
             </Button>
         </div>
         </div>
