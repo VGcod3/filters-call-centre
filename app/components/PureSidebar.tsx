@@ -13,7 +13,7 @@ enum Display {
   Hidden = 'hidden',
 }
 
-interface NewState {
+interface SidebarState {
   display: Display;
   isHovered: boolean;
   isTransition: boolean;
@@ -28,10 +28,26 @@ type SidebarAction =
   | { type: "stoped_transition" }
   | { type: "closed_sidebar" }
 
-export const sidebarReducer = (state: NewState, action: SidebarAction) => {
+  const saveDisplayToCookie = (display:Display) => {
+    const cookieValue = encodeURIComponent(display);
+    document.cookie = `display=${cookieValue}; path=/`;
+  };
+
+  const getDisplayFromCookie = () => {
+    if(typeof document !== 'undefined'){
+      const cookies = document.cookie.split(';');
+      const displayCookie = cookies.find(cookie => cookie.trim().startsWith('display='));
+      if (displayCookie) {
+        const displayValue = decodeURIComponent(displayCookie.split('=')[1]);
+        return displayValue as Display;
+      }
+    }
+    return Display.Hidden;
+  };
+
+export const sidebarReducer = (state: SidebarState, action: SidebarAction) => {
   switch (action.type) {
     case "hovered_open_button_or_edge":
-      if (state.display === Display.Full) return state;
       return { ...state, display: Display.Floating, isTransition: true, isFloating: true};
     case "unhovered":
       if (state.display === Display.Full) return { ...state, isHovered: false };
@@ -40,8 +56,10 @@ export const sidebarReducer = (state: NewState, action: SidebarAction) => {
       if (state.display === Display.Full) return { ...state, isHovered: true };
       return state
     case "opened_full_mode":
+      saveDisplayToCookie(Display.Full);
       return { ...state, display: Display.Full, isHovered: true, isFloating: false }
     case "closed_sidebar":
+      saveDisplayToCookie(Display.Hidden);
       return { ...state, display: Display.Hidden, isHovered: false }
     case "stoped_transition":
       if (state.display === Display.Full) return state;
@@ -56,9 +74,9 @@ export const PureSidebar = () => {
   const isRTL = useDirection();
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: Display.Hidden,
+    display: getDisplayFromCookie(),
     isHovered: false,
-    isTransition: false,
+    isTransition: true,
     isFloating: false,
   });
 
@@ -97,17 +115,10 @@ export const PureSidebar = () => {
         className={cn(
           "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6 bg-white",
           state.isTransition ? "transition-all duration-500 ease-in-out" : "opacity-0",
-          state.display === Display.Floating
-            ? isRTL
-              ? "-translate-x-3"
-              : "translate-x-3"
-            : state.display === Display.Full
-              ? "translate-x-0"
-              : isRTL
-                ? "translate-x-[100%]"
-                : "translate-x-[-100%]",
-          state.display === Display.Full && "h-screen",
+          state.display === Display.Full && "translate-x-0 h-screen",
           state.display === Display.Floating && "absolute top-[8%] bottom-[1%] rounded-xl",
+          state.display === Display.Floating && (isRTL ? "-translate-x-3" : "translate-x-3"),
+          state.display === Display.Hidden ? (isRTL ? "translate-x-[100%]" : "translate-x-[-100%]") : "",
           state.display === Display.Hidden ? (state.isFloating ? 'absolute top-[8%] bottom-[1%] rounded-xl' : 'h-screen') : '',
           isRTL ? "right-0" : "left-0"
         )}
@@ -160,4 +171,4 @@ export const PureSidebar = () => {
       </nav>
     </div>
   );
-};
+}; 
