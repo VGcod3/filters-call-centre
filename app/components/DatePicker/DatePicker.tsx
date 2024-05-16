@@ -1,87 +1,82 @@
-import { CalendarIcon } from "lucide-react";
+import { useSearchParams } from "@remix-run/react";
+import dayjs from "dayjs";
+import { CalendarIcon, ChevronDownIcon } from "lucide-react";
+import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { DropdownView } from "~/components/DatePicker/DropdownView";
+import { CalendarView } from "~/components/DatePicker/CalendarView";
+import { useDatePicker } from "~/components/DatePicker/useDatePicker";
+import type { StatsPeriod } from "~/routes/reports";
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
-import { DropDownList } from "./DropDownList";
-import useDatePicker from "./useDatePicker";
+export enum DropdownType {
+  "checkbox",
+  "calendar",
+}
 
-import { Separator } from "~/components/ui/separator";
-import { DateRange } from "react-day-picker";
-import { BottomBar } from "./BottomBar";
-import { TopBar } from "./TopBar";
-
-import { Calendar } from "~/components/ui/calendar";
-import { DatePickerProvider } from "./DatePickerContext";
-
-import type { DatePickerContextProps } from "./DatePickerContext";
-import dayjs from "dayjs";
-import TriggerButton from "../TriggerButton";
+export const presetDates: Record<StatsPeriod, string> = {
+  "1H": "Last hour",
+  Today: "Today",
+  Yesterday: "Yesterday",
+  "7D": "Last 7 days",
+  "14D": "Last 14 days",
+  "30D": "Last 30 days",
+};
 
 export const fromDate = dayjs().subtract(3, "months").toDate();
 export const toDate = dayjs().toDate();
 
 export const DatePicker = () => {
-  const ctx: DatePickerContextProps = useDatePicker();
+  const { dropdownContentType, setDropdownContentType, fromTo } =
+    useDatePicker();
 
-  const calculateLeftMonthOnCalendar = () => {
-    if (
-      dayjs(ctx.fromTo.from)
-        .add(1, "month")
-        .startOf("month")
-        .isAfter(dayjs(toDate).startOf("month"))
-    ) {
-      return dayjs(ctx.fromTo.from).subtract(1, "month").toDate();
+  const [searchParams] = useSearchParams();
+
+  const getButtonDisplaytext = () => {
+    if (searchParams.has("statsPeriod")) {
+      return searchParams.get("statsPeriod");
     }
-    return dayjs(ctx.fromTo.from).toDate();
+
+    const from = dayjs(fromTo.from).format("MMM DD, YYYY");
+    const to = dayjs(fromTo.to).format("MMM DD, YYYY");
+
+    if (from === to) {
+      return from;
+    }
+
+    return `${from} - ${to}`;
   };
 
   return (
-    <DatePickerProvider value={ctx}>
-      <Popover open={ctx.calendarOpen} onOpenChange={ctx.toggleCalendar}>
-        <DropdownMenu open={ctx.dropdownOpen} onOpenChange={ctx.toggleDropdown}>
-          <PopoverTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <TriggerButton
-                isOpen={ctx.dropdownOpen}
-                toggleDropdown={ctx.toggleDropdown}
-                Icon={CalendarIcon}
-              >
-                {ctx.getButtonDisplaytext()}
-              </TriggerButton>
-            </DropdownMenuTrigger>
-          </PopoverTrigger>
-          <DropDownList />
-        </DropdownMenu>
-        <PopoverContent className="w-auto p-0" align="start">
-          <TopBar />
-
-          <Separator />
-
-          <Calendar
-            initialFocus
-            mode="range"
-            selected={ctx.calendarState}
-            onSelect={(calendarData) =>
-              ctx.setCalendarState(calendarData as unknown as DateRange)
-            }
-            defaultMonth={calculateLeftMonthOnCalendar()}
-            numberOfMonths={2}
-            toDate={toDate}
-            fromDate={fromDate}
-          />
-
-          <Separator />
-
-          <BottomBar />
-        </PopoverContent>
-      </Popover>
-    </DatePickerProvider>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (!open && dropdownContentType === DropdownType.calendar) {
+          setTimeout(() => {
+            setDropdownContentType(DropdownType.checkbox);
+          }, 500);
+        }
+      }}
+    >
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          className="w-auto min-w-28 text-gray-600 px-2.5 flex gap-1.5 justify-between  select-none"
+        >
+          <CalendarIcon size={16} strokeWidth={1.5} />
+          {getButtonDisplaytext()}
+          <ChevronDownIcon size={16} strokeWidth={1.5} />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        {dropdownContentType === DropdownType.checkbox ? (
+          <DropdownView setDropdownContentType={setDropdownContentType} />
+        ) : (
+          <CalendarView setDropdownContentType={setDropdownContentType} />
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

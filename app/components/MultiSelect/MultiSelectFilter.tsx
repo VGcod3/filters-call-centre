@@ -1,30 +1,19 @@
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "~/components/ui/popover";
-
-import { Checkbox } from "../ui/checkbox";
+import { Popover, PopoverContent } from "~/components/ui/popover";
 
 import { useSearchParams } from "@remix-run/react";
-import {
-  DropdownListProps,
-  DropdownMenuCheckboxesProps,
-  GroupedListItem,
-  ListItem,
-} from "./types";
-import { useMultiSelect } from "./useMultiSelect";
+import type { DropdownMenuCheckboxesProps } from "./types";
+import { useMultiSelect, isGrouped } from "./useMultiSelect";
 
 import {
   Command,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandGroup,
   CommandInput,
   CommandEmpty,
-} from "../ui/command";
-import TriggerButton from "../TriggerButton";
+} from "~/components/ui/command";
+import { TriggerButton } from "../TriggerButton";
+import { X } from "lucide-react";
+import { DataListItems } from "./DataListItems";
 
 export function MultiSelectFilter({
   Icon,
@@ -34,23 +23,23 @@ export function MultiSelectFilter({
 }: DropdownMenuCheckboxesProps) {
   const {
     open,
-    toggleCheckbox,
     handleClearAll,
     toggleDropdown,
-    getButtonLabel,
-  } = useMultiSelect(name, dataList);
+    checkboxes,
+    handleApply,
+    toggleCheckbox,
+  } = useMultiSelect(name);
+
+  const [searchParams] = useSearchParams();
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <TriggerButton
-          isOpen={open}
-          toggleDropdown={toggleDropdown}
-          Icon={Icon}
-        >
-          {getButtonLabel(name, title)}
-        </TriggerButton>
-      </PopoverTrigger>
+    <Popover open={open} onOpenChange={toggleDropdown}>
+      <TriggerButton
+        Icon={Icon}
+        name={name}
+        title={title}
+        dataList={dataList}
+      />
       <PopoverContent className="w-56 p-1" align="start">
         <Command>
           <CommandInput placeholder={`Search for ${name}`} />
@@ -58,69 +47,44 @@ export function MultiSelectFilter({
             <CommandEmpty>No results found.</CommandEmpty>
 
             <DataListItems
+              isGrouped={isGrouped}
+              checkboxes={checkboxes}
+              toggleCheckbox={toggleCheckbox}
               name={name}
               list={dataList}
-              handleCheckboxChange={toggleCheckbox}
             />
-
-            <CommandSeparator className="my-0.5" />
-            <CommandItem
-              className="flex justify-center"
-              onSelect={handleClearAll}
-            >
-              Clear filters
-            </CommandItem>
           </CommandList>
+
+          <div className="flex gap-1 font-medium m-1 mt-0.5">
+            <CommandItem
+              className="flex-1 flex gap-1 rounded-md justify-center text-gray-600 border border-input p-0.5"
+              onSelect={() => {
+                handleClearAll();
+                toggleDropdown();
+              }}
+              disabled={checkboxes.length === 0}
+            >
+              Clear
+              <X className="w-3.5 h-3.5" strokeWidth={1.5} />
+            </CommandItem>
+            <CommandItem
+              disabled={arraysEqual(searchParams.getAll(name), checkboxes)}
+              className="flex-1 flex rounded-md justify-center bg-blue-600 text-gray-100 p-0.5"
+              onSelect={() => {
+                handleApply();
+                toggleDropdown();
+              }}
+            >
+              Apply
+            </CommandItem>
+          </div>
         </Command>
       </PopoverContent>
     </Popover>
   );
 }
 
-const DataListItems = ({
-  name,
-  list,
-  handleCheckboxChange,
-}: DropdownListProps) => {
-  const [searchParams] = useSearchParams();
-
-  const { isGrouped } = useMultiSelect(name, list);
-
-  if (isGrouped(list)) {
-    return list.map((group: GroupedListItem, index: number) => (
-      <CommandGroup
-        key={index}
-        heading={group.label}
-        className="font-normal text-gray-800"
-      >
-        {group.listItems.map((listItem: ListItem) => (
-          <CommandItem
-            key={listItem}
-            onSelect={() => handleCheckboxChange(listItem)}
-            className="flex space-x-2 text-gray-500"
-          >
-            <Checkbox
-              className="border-gray-300 data-[state=checked]:border-primary"
-              checked={searchParams.getAll(name).includes(listItem)}
-            />
-            <span>{listItem}</span>
-          </CommandItem>
-        ))}
-      </CommandGroup>
-    ));
-  }
-
-  return list.map((listItem: ListItem) => (
-    <CommandItem
-      key={listItem}
-      onSelect={() => handleCheckboxChange(listItem)}
-      className="flex space-x-2 text-gray-500"
-    >
-      <Checkbox
-        className="border-gray-300 data-[state=checked]:border-primary"
-        checked={searchParams.getAll(name).includes(listItem)}
-      />
-      <span>{listItem}</span>
-    </CommandItem>
-  ));
+const arraysEqual = (arr1: string[], arr2: string[]): boolean => {
+  if (arr1.length !== arr2.length) return false;
+  return arr1.every((item) => arr2.includes(item));
 };

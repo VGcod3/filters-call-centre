@@ -5,11 +5,46 @@ import { GroupedListItem } from "./types";
 const groupedStatuses: GroupedListItem[] = [
   {
     label: "Working status",
-    listItems: ["Available", "Busy", "Away"],
+    listItems: [
+      {
+        value: "Available",
+        label: "Available",
+      },
+      {
+        value: "Busy",
+        label: "Busy",
+      },
+      {
+        value: "Away",
+        label: "Away",
+      },
+    ],
   },
+
   {
     label: "Non working status",
-    listItems: ["Offline", "Idle", "Break", "Lunch", "Meeting"],
+    listItems: [
+      {
+        label: "Offline",
+        value: "Offline",
+      },
+      {
+        label: "Idle",
+        value: "Idle",
+      },
+      {
+        label: "Break",
+        value: "Break",
+      },
+      {
+        label: "Lunch",
+        value: "Lunch",
+      },
+      {
+        label: "Meeting",
+        value: "Meeting",
+      },
+    ],
   },
 ];
 

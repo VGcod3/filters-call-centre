@@ -14,12 +14,11 @@ import {
 } from "~/components/ui/breadcrumb";
 // import { MaskedTimeInput } from "~/components/DatePicker/TimeInput";
 
-import { AgentsFilter } from "~/components/MultiSelect/AgentsFilter";
 import { StatusFilter } from "~/components/MultiSelect/StatusFilter";
-import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
 
 import { fromDate, toDate } from "~/components/DatePicker/DatePicker";
 import dayjs from "dayjs";
+import { QueuesFilter } from "~/components/MultiSelect/QueuesFilter";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
@@ -34,10 +33,38 @@ const statsPeriodsEnum = z.enum([
   "30D",
 ]);
 
-// type StatsPeriod = z.infer<typeof statsPeriodsEnum>;
+export type StatsPeriod = z.infer<typeof statsPeriodsEnum>;
+
+export const datesSchema = z.union([
+  z.object({
+    statsPeriod: statsPeriodsEnum,
+  }),
+  z.object({
+    from: z
+      .string()
+      .datetime()
+      .refine((value) => withInDateRange(value)),
+    to: z
+      .string()
+      .datetime()
+      .refine((value) => withInDateRange(value)),
+  }),
+]);
+
+export const searchParamsSchemaGenerator = (valiedQueues: string[]) =>
+  datesSchema.and(
+    z.object({
+      queues: z.optional(
+        z
+          .string()
+          .refine((value) => valiedQueues.includes(value))
+          .array()
+      ),
+    })
+  );
 
 //handle daytlight shift
-const withInDateRange = (date: Date) => {
+const withInDateRange = (date: string) => {
   return (
     dayjs(date).isAfter(dayjs(fromDate)) && dayjs(date).isBefore(dayjs(toDate))
   );
@@ -48,12 +75,18 @@ export const searchParamsSchema = z.union([
     statsPeriod: statsPeriodsEnum,
   }),
   z.object({
-    from: z.coerce.date().refine((value) => withInDateRange(value)),
-    to: z.coerce.date().refine((value) => withInDateRange(value)),
+    from: z
+      .string()
+      .datetime()
+      .refine((value) => withInDateRange(value)),
+    to: z
+      .string()
+      .datetime()
+      .refine((value) => withInDateRange(value)),
   }),
 ]);
 
-export function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
 
   const searchParams = url.searchParams;
@@ -70,6 +103,8 @@ export function loader({ request }: LoaderFunctionArgs) {
 
     return redirect(url.toString());
   }
+
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 
   return null;
 }
@@ -97,9 +132,8 @@ export default function Reports() {
 
       <div className="flex space-x-1 p-1 border border-gray-300 rounded-md">
         <DatePicker />
-        <AgentsFilter />
+        <QueuesFilter />
         <StatusFilter />
-        <TeamsFilter />
       </div>
     </div>
   );

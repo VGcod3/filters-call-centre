@@ -1,6 +1,9 @@
-import { LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-export type ListItem = string;
+export type ListItem = {
+  value: string;
+  label: string;
+};
 
 export type GroupedListItem = {
   label: string;
@@ -20,5 +23,7 @@ export type DropdownMenuCheckboxesProps = {
 export type DropdownListProps = {
   name: string;
   list: ListItem[] | GroupedListItem[];
-  handleCheckboxChange: (id: string) => void;
+  checkboxes: string[];
+  toggleCheckbox: (id: string) => void;
+  isGrouped: (list: GroupedList | PlainList) => list is GroupedList;
 };
