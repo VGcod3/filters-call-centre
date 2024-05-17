@@ -10,8 +10,11 @@ export const meta: MetaFunction = () => {
 
 export default function Languages() {
   return (
-    <div>
+    <div className="flex" >
         <PureSidebar />
+        <div>
+          <p>ldjksdfdslkf</p>
+        </div>
     </div>
   );
 }

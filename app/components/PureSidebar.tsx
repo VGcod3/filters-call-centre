@@ -2,10 +2,10 @@ import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
-import { Link } from "@remix-run/react";
+import { Link, useNavigation } from "@remix-run/react";
 import { cn } from "~/lib/utils";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 
 enum Display {
   Full = "full",
@@ -21,10 +21,10 @@ interface SidebarState {
 }
 
 type SidebarAction =
-  | { type: "hovered_open_button_or_edge" }
+  | { type: "entered_button_or_edge_area" }
   | { type: "unhovered" }
   | { type: "opened_full_mode" }
-  | { type: "hovered_sidebar" }
+  | { type: "entered_sidebar" }
   | { type: "stoped_transition" }
   | { type: "closed_sidebar" };
 
@@ -52,7 +52,7 @@ export const sidebarReducer = (
   action: SidebarAction
 ): SidebarState => {
   switch (action.type) {
-    case "hovered_open_button_or_edge":
+    case "entered_button_or_edge_area":
       return {
         ...state,
         display: Display.Floating,
@@ -62,7 +62,7 @@ export const sidebarReducer = (
     case "unhovered":
       if (state.display === Display.Full) return { ...state, isHovered: false };
       return { ...state, display: Display.Hidden };
-    case "hovered_sidebar":
+    case "entered_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: true };
       return state;
     case "opened_full_mode":
@@ -95,6 +95,14 @@ export const PureSidebar = () => {
     sidebarStyle: "full",
   });
 
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if(navigation.state === "loading" && navigation.location.search.includes("lng")) {
+      dispatch({ type: "stoped_transition"});
+    }
+  }, [navigation.state, navigation.location?.search])
+
   return (
     <div>
       <div
@@ -102,7 +110,7 @@ export const PureSidebar = () => {
           "absolute top-1 pl-5 pr-7 pt-2 pb-10",
           isRTL ? "right-0" : "left-0"
         )}
-        onMouseEnter={() => dispatch({ type: "hovered_open_button_or_edge" })}
+        onMouseEnter={() => dispatch({ type: "entered_button_or_edge_area" })}
         onMouseLeave={({ clientX, clientY }) => {
           const isInvalidPosition = isRTL
             ? clientX > window.innerWidth - 84 && clientY > 0
@@ -130,34 +138,29 @@ export const PureSidebar = () => {
             "fixed bg-transparent top-[84px] w-2.5 h-full",
             isRTL ? "right-0" : "left-0"
           )}
-          onMouseEnter={() => dispatch({ type: "hovered_open_button_or_edge" })}
+          onMouseEnter={() => dispatch({ type: "entered_button_or_edge_area" })}
         />
       )}
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2 pl-6 pr-6 bg-white",
-          state.isTransition
-            ? "transition-all duration-500 ease-in-out"
-            : "opacity-0",
-          state.display === Display.Full && "translate-x-0",
-          state.display === Display.Floating &&
-            (isRTL ? "-translate-x-3" : "translate-x-3"),
-          state.display === Display.Hidden
-            ? isRTL
-              ? "translate-x-[100%]"
-              : "translate-x-[-100%]"
-            : "",
-          state.sidebarStyle === "floating"
-            ? "absolute top-[8%] bottom-[1%] rounded-xl"
-            : "h-screen",
-          isRTL ? "right-0" : "left-0"
+            "border border-gray-300 border-r-2 bg-white w-[288px] pl-6 pr-6",
+            state.isTransition ? "transition-all duration-500 ease-in-out" : "opacity-0",
+            state.display === Display.Full && "translate-x-0",
+            state.display === Display.Hidden 
+                  ? cn("invisible absolute", isRTL ? "translate-x-[100%]" : "-translate-x-[100%]")
+                  : "visible relative",
+            state.display === Display.Floating &&  (isRTL ? "-translate-x-3" : "translate-x-3"),
+            state.sidebarStyle === "floating" 
+              ? "absolute top-[8%] bottom-[1%] rounded-xl" 
+              : "h-screen",
+            isRTL ? "right-0" : "left-0"
         )}
         onMouseEnter={({ clientX }) => {
           const shouldReturn = isRTL
             ? clientX >= window.innerWidth - 84
             : clientX <= 84;
           if (shouldReturn) return;
-          dispatch({ type: "hovered_sidebar" });
+          dispatch({ type: "entered_sidebar" });
         }}
         onMouseLeave={({ clientX, clientY }) => {
           const shouldReturn = isRTL
@@ -194,11 +197,10 @@ export const PureSidebar = () => {
             </Button>
           )}
         </div>
-        <div className="flex items-center justify-center w-full">
+        <div className="flex items-center justify-center">
           <Button
             asChild
             className="bg-red-500"
-            onClick={() => dispatch({ type: "stoped_transition" })}
           >
             <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
               Switch
