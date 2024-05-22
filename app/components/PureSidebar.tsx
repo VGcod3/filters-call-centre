@@ -8,7 +8,6 @@ import { useEffect, useReducer } from "react";
 import { DisplaySidebar, cn } from "~/lib/utils";
 import { useSidebarDisplay } from "~/routes/action.change-display";
 
-
 enum Display {
   Full = "full",
   Floating = "floating",
@@ -48,7 +47,7 @@ export const sidebarReducer = (
     case "entered_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: true };
       return state;
-    case "opened_full_mode": 
+    case "opened_full_mode":
       return {
         ...state,
         display: Display.Full,
@@ -77,26 +76,21 @@ export const PureSidebar = () => {
     sidebarStyle: "full",
   });
 
-
   const navigation = useNavigation();
+  const navSearchParams = new URLSearchParams(navigation.location?.search);
 
   const notCurrentLanguage = isRTL ? "en" : "he";
-  const isChangingLanguage = navigation.state === "loading" && navigation.location?.search.includes(`lng=${notCurrentLanguage}`);
+  const isChangingLanguage =
+    navigation.state === "loading" &&
+    navSearchParams.has("lng") &&
+    navSearchParams.get("lng") === notCurrentLanguage;
 
   useEffect(() => {
-    if(!isChangingLanguage) return;
-    dispatch({type: "changed_language"});
-  }, [isChangingLanguage])
-
+    if (!isChangingLanguage) return;
+    dispatch({ type: "changed_language" });
+  }, [isChangingLanguage]);
 
   const fetcher = useFetcher();
-
-  const handleChangeDisplay = (displayValue: DisplaySidebar) => {
-    fetcher.submit(
-      { display: displayValue },
-      { method: "post", action: "/action/change-display" }
-    );
-  };
 
   return (
     <div>
@@ -115,17 +109,22 @@ export const PureSidebar = () => {
         }}
       >
         {state.display !== Display.Full && (
-          <Button
-            onClick={() => {
+          <fetcher.Form
+            method="post"
+            action="/action/change-display"
+            onSubmit={() => {
               dispatch({ type: "opened_full_mode" });
-              handleChangeDisplay(DisplaySidebar.Full);
             }}
-            variant="ghost"
-            size="icon"
-            className="cursor-pointer"
           >
-            <PanelsTopLeft />
-          </Button>
+            <Button
+              name="display"
+              value={DisplaySidebar.Full}
+              variant="ghost"
+              size="icon"
+            >
+              <PanelsTopLeft />
+            </Button>
+          </fetcher.Form>
         )}
       </div>
 
@@ -141,20 +140,22 @@ export const PureSidebar = () => {
       )}
       <nav
         className={cn(
-            "border border-gray-300 border-r-2 bg-white w-[288px] px-6",
-            state.transitionEnabled ? "transition-all duration-500 ease-in-out" : "opacity-0",
-            state.display === Display.Full && "translate-x-0",
-            state.sidebarStyle === "floating" 
-              ? "absolute top-[8%] bottom-[1%] rounded-xl" 
-              : "h-screen",
-            isRTL ? "right-0" : "left-0",
-            {
-              "invisible absolute": state.display === Display.Hidden ,
-              "translate-x-[100%]": state.display === Display.Hidden && isRTL,
-              "-translate-x-[100%]": state.display === Display.Hidden && !isRTL,
-              "-translate-x-3": state.display === Display.Floating && isRTL,
-              "translate-x-3": state.display === Display.Floating && !isRTL,
-            }
+          "border border-gray-300 border-r-2 bg-white w-[288px] px-6",
+          state.transitionEnabled
+            ? "transition-all duration-500 ease-in-out"
+            : "opacity-0",
+          state.display === Display.Full && "translate-x-0",
+          state.sidebarStyle === "floating"
+            ? "absolute top-[8%] bottom-[1%] rounded-xl"
+            : "h-screen",
+          isRTL ? "right-0" : "left-0",
+          {
+            "invisible absolute": state.display === Display.Hidden,
+            "translate-x-[100%]": state.display === Display.Hidden && isRTL,
+            "-translate-x-[100%]": state.display === Display.Hidden && !isRTL,
+            "-translate-x-3": state.display === Display.Floating && isRTL,
+            "translate-x-3": state.display === Display.Floating && !isRTL,
+          }
         )}
         onMouseEnter={({ clientX }) => {
           const shouldReturn = isRTL
@@ -188,31 +189,33 @@ export const PureSidebar = () => {
             </div>
           </div>
           {state.display === Display.Full && state.isHovered && (
-            <Button
-              size="icon"
-              className="w-5 h-5"
-              variant="ghost"
-              onClick={() => {
+            <fetcher.Form
+              method="post"
+              action="/action/change-display"
+              onSubmit={() => {
                 dispatch({ type: "closed_sidebar" });
-                handleChangeDisplay(DisplaySidebar.Hidden);
               }}
             >
-              {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-            </Button>
+              <Button
+                size="icon"
+                className="w-5 h-5"
+                variant="ghost"
+                name="display"
+                value={DisplaySidebar.Hidden}
+              >
+                {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              </Button>
+            </fetcher.Form>
           )}
         </div>
         <div className="flex items-center justify-center">
-          <Button
-            asChild
-            className="bg-red-500"
-          >
+          <Button asChild className="bg-red-500">
             <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
               Switch
             </Link>
           </Button>
         </div>
       </nav>
-
     </div>
   );
 };

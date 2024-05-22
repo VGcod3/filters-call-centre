@@ -1,12 +1,11 @@
-import { json } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
+import { json, type ActionFunctionArgs } from "@remix-run/node";
 import { setSidebarDisplay } from "~/lib/sidebar-session";
 import { isDisplay, useRequestInfo } from "~/lib/utils";
 
-export const action: ActionFunction = async ({ request }) => {
-  const requestText = await request.text();
-  const form = new URLSearchParams(requestText);
-  const display = form.get("display");
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  const display = formData.get("display");
 
   if (!isDisplay(display)) {
     return json({
