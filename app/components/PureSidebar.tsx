@@ -2,10 +2,12 @@ import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
-import { Link, useNavigation } from "@remix-run/react";
-import { cn } from "~/lib/utils";
+import { Link, useFetcher, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useEffect, useReducer } from "react";
+import { DisplaySidebar, cn } from "~/lib/utils";
+import { useSidebarDisplay } from "~/routes/action.change-display";
+
 
 enum Display {
   Full = "full",
@@ -16,36 +18,17 @@ enum Display {
 interface SidebarState {
   display: Display;
   isHovered: boolean;
-  isTransition: boolean;
+  transitionEnabled: boolean;
   sidebarStyle: "full" | "floating";
 }
 
 type SidebarAction =
   | { type: "entered_button_or_edge_area" }
-  | { type: "unhovered" }
+  | { type: "left_sidebar" }
   | { type: "opened_full_mode" }
   | { type: "entered_sidebar" }
-  | { type: "stoped_transition" }
+  | { type: "changed_language" }
   | { type: "closed_sidebar" };
-
-const saveDisplayToCookie = (display: Display) => {
-  const cookieValue = encodeURIComponent(display);
-  document.cookie = `display=${cookieValue}; path=/`;
-};
-
-const getDisplayFromCookie = () => {
-  if (typeof document !== "undefined") {
-    const cookies = document.cookie.split(";");
-    const displayCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith("display=")
-    );
-    if (displayCookie) {
-      const displayValue = decodeURIComponent(displayCookie.split("=")[1]);
-      return displayValue as Display;
-    }
-  }
-  return Display.Hidden;
-};
 
 export const sidebarReducer = (
   state: SidebarState,
@@ -56,17 +39,16 @@ export const sidebarReducer = (
       return {
         ...state,
         display: Display.Floating,
-        isTransition: true,
+        transitionEnabled: true,
         sidebarStyle: "floating",
       };
-    case "unhovered":
+    case "left_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: false };
       return { ...state, display: Display.Hidden };
     case "entered_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: true };
       return state;
-    case "opened_full_mode":
-      saveDisplayToCookie(Display.Full);
+    case "opened_full_mode": 
       return {
         ...state,
         display: Display.Full,
@@ -74,11 +56,10 @@ export const sidebarReducer = (
         sidebarStyle: "full",
       };
     case "closed_sidebar":
-      saveDisplayToCookie(Display.Hidden);
       return { ...state, display: Display.Hidden, isHovered: false };
-    case "stoped_transition":
+    case "changed_language":
       if (state.display === Display.Full) return state;
-      return { ...state, isTransition: false };
+      return { ...state, transitionEnabled: false };
     default:
       throw new Error("Invalid action type");
   }
@@ -87,21 +68,35 @@ export const sidebarReducer = (
 export const PureSidebar = () => {
   const { i18n } = useTranslation();
   const isRTL = useDirection();
+  const display = useSidebarDisplay();
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: getDisplayFromCookie(),
+    display: display as Display,
     isHovered: false,
-    isTransition: true,
+    transitionEnabled: true,
     sidebarStyle: "full",
   });
 
+
   const navigation = useNavigation();
 
+  const notCurrentLanguage = isRTL ? "en" : "he";
+  const isChangingLanguage = navigation.state === "loading" && navigation.location?.search.includes(`lng=${notCurrentLanguage}`);
+
   useEffect(() => {
-    if(navigation.state === "loading" && navigation.location.search.includes("lng")) {
-      dispatch({ type: "stoped_transition"});
-    }
-  }, [navigation.state, navigation.location?.search])
+    if(!isChangingLanguage) return;
+    dispatch({type: "changed_language"});
+  }, [isChangingLanguage])
+
+
+  const fetcher = useFetcher();
+
+  const handleChangeDisplay = (displayValue: DisplaySidebar) => {
+    fetcher.submit(
+      { display: displayValue },
+      { method: "post", action: "/action/change-display" }
+    );
+  };
 
   return (
     <div>
@@ -116,12 +111,15 @@ export const PureSidebar = () => {
             ? clientX > window.innerWidth - 84 && clientY > 0
             : clientX < 84 && clientY > 0;
           if (isInvalidPosition) return;
-          dispatch({ type: "unhovered" });
+          dispatch({ type: "left_sidebar" });
         }}
       >
         {state.display !== Display.Full && (
           <Button
-            onClick={() => dispatch({ type: "opened_full_mode" })}
+            onClick={() => {
+              dispatch({ type: "opened_full_mode" });
+              handleChangeDisplay(DisplaySidebar.Full);
+            }}
             variant="ghost"
             size="icon"
             className="cursor-pointer"
@@ -143,17 +141,20 @@ export const PureSidebar = () => {
       )}
       <nav
         className={cn(
-            "border border-gray-300 border-r-2 bg-white w-[288px] pl-6 pr-6",
-            state.isTransition ? "transition-all duration-500 ease-in-out" : "opacity-0",
+            "border border-gray-300 border-r-2 bg-white w-[288px] px-6",
+            state.transitionEnabled ? "transition-all duration-500 ease-in-out" : "opacity-0",
             state.display === Display.Full && "translate-x-0",
-            state.display === Display.Hidden 
-                  ? cn("invisible absolute", isRTL ? "translate-x-[100%]" : "-translate-x-[100%]")
-                  : "visible relative",
-            state.display === Display.Floating &&  (isRTL ? "-translate-x-3" : "translate-x-3"),
             state.sidebarStyle === "floating" 
               ? "absolute top-[8%] bottom-[1%] rounded-xl" 
               : "h-screen",
-            isRTL ? "right-0" : "left-0"
+            isRTL ? "right-0" : "left-0",
+            {
+              "invisible absolute": state.display === Display.Hidden ,
+              "translate-x-[100%]": state.display === Display.Hidden && isRTL,
+              "-translate-x-[100%]": state.display === Display.Hidden && !isRTL,
+              "-translate-x-3": state.display === Display.Floating && isRTL,
+              "translate-x-3": state.display === Display.Floating && !isRTL,
+            }
         )}
         onMouseEnter={({ clientX }) => {
           const shouldReturn = isRTL
@@ -169,7 +170,7 @@ export const PureSidebar = () => {
             : clientX < 15 || (clientX < 84 && clientY <= 85);
 
           if (shouldReturn) return;
-          dispatch({ type: "unhovered" });
+          dispatch({ type: "left_sidebar" });
         }}
       >
         <div className="flex justify-between items-center mt-10">
@@ -191,7 +192,10 @@ export const PureSidebar = () => {
               size="icon"
               className="w-5 h-5"
               variant="ghost"
-              onClick={() => dispatch({ type: "closed_sidebar" })}
+              onClick={() => {
+                dispatch({ type: "closed_sidebar" });
+                handleChangeDisplay(DisplaySidebar.Hidden);
+              }}
             >
               {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
             </Button>
@@ -208,6 +212,7 @@ export const PureSidebar = () => {
           </Button>
         </div>
       </nav>
+
     </div>
   );
 };
