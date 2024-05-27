@@ -2,11 +2,10 @@ import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
-import { Link, useFetcher, useNavigation } from "@remix-run/react";
+import { Link, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useEffect, useReducer } from "react";
-import { DisplaySidebar, cn } from "~/lib/utils";
-import { useSidebarDisplay } from "~/routes/action.change-display";
+import { cn } from "~/lib/utils";
 
 enum Display {
   Full = "full",
@@ -67,10 +66,9 @@ export const sidebarReducer = (
 export const PureSidebar = () => {
   const { i18n } = useTranslation();
   const isRTL = useDirection();
-  const display = useSidebarDisplay();
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: display as Display,
+    display: Display.Hidden,
     isHovered: false,
     transitionEnabled: true,
     sidebarStyle: "full",
@@ -90,7 +88,6 @@ export const PureSidebar = () => {
     dispatch({ type: "changed_language" });
   }, [isChangingLanguage]);
 
-  const fetcher = useFetcher();
 
   return (
     <div>
@@ -109,22 +106,14 @@ export const PureSidebar = () => {
         }}
       >
         {state.display !== Display.Full && (
-          <fetcher.Form
-            method="post"
-            action="/action/change-display"
-            onSubmit={() => {
-              dispatch({ type: "opened_full_mode" });
-            }}
-          >
             <Button
               name="display"
-              value={DisplaySidebar.Full}
               variant="ghost"
               size="icon"
+              onClick={() => dispatch({ type: "opened_full_mode" })}
             >
               <PanelsTopLeft />
             </Button>
-          </fetcher.Form>
         )}
       </div>
 
@@ -189,23 +178,15 @@ export const PureSidebar = () => {
             </div>
           </div>
           {state.display === Display.Full && state.isHovered && (
-            <fetcher.Form
-              method="post"
-              action="/action/change-display"
-              onSubmit={() => {
-                dispatch({ type: "closed_sidebar" });
-              }}
-            >
               <Button
                 size="icon"
                 className="w-5 h-5"
                 variant="ghost"
                 name="display"
-                value={DisplaySidebar.Hidden}
+                onClick={() => dispatch({ type: "closed_sidebar" })}
               >
                 {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </Button>
-            </fetcher.Form>
           )}
         </div>
         <div className="flex items-center justify-center">
