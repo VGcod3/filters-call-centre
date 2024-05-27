@@ -21,41 +21,41 @@ interface SidebarState {
 }
 
 type SidebarAction =
-  | { type: "entered_button_or_edge_area" }
-  | { type: "left_sidebar" }
-  | { type: "opened_full_mode" }
-  | { type: "entered_sidebar" }
-  | { type: "changed_language" }
-  | { type: "closed_sidebar" };
+  | { type: "enter_button_or_edge_area" }
+  | { type: "leave_sidebar" }
+  | { type: "open_full_mode" }
+  | { type: "enter_sidebar" }
+  | { type: "change_language" }
+  | { type: "close_sidebar" };
 
 export const sidebarReducer = (
   state: SidebarState,
   action: SidebarAction
 ): SidebarState => {
   switch (action.type) {
-    case "entered_button_or_edge_area":
+    case "enter_button_or_edge_area":
       return {
         ...state,
         display: Display.Floating,
         transitionEnabled: true,
         sidebarStyle: "floating",
       };
-    case "left_sidebar":
+    case "leave_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: false };
       return { ...state, display: Display.Hidden };
-    case "entered_sidebar":
+    case "enter_sidebar":
       if (state.display === Display.Full) return { ...state, isHovered: true };
       return state;
-    case "opened_full_mode":
+    case "open_full_mode":
       return {
         ...state,
         display: Display.Full,
         isHovered: true,
         sidebarStyle: "full",
       };
-    case "closed_sidebar":
+    case "close_sidebar":
       return { ...state, display: Display.Hidden, isHovered: false };
-    case "changed_language":
+    case "change_language":
       if (state.display === Display.Full) return state;
       return { ...state, transitionEnabled: false };
     default:
@@ -68,7 +68,7 @@ export const PureSidebar = () => {
   const isRTL = useDirection();
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: Display.Hidden,
+    display: Display.Full,
     isHovered: false,
     transitionEnabled: true,
     sidebarStyle: "full",
@@ -85,9 +85,8 @@ export const PureSidebar = () => {
 
   useEffect(() => {
     if (!isChangingLanguage) return;
-    dispatch({ type: "changed_language" });
+    dispatch({ type: "change_language" });
   }, [isChangingLanguage]);
-
 
   return (
     <div>
@@ -96,13 +95,13 @@ export const PureSidebar = () => {
           "absolute top-1 pl-5 pr-7 pt-2 pb-10",
           isRTL ? "right-0" : "left-0"
         )}
-        onMouseEnter={() => dispatch({ type: "entered_button_or_edge_area" })}
+        onMouseEnter={() => dispatch({ type: "enter_button_or_edge_area" })}
         onMouseLeave={({ clientX, clientY }) => {
           const isInvalidPosition = isRTL
             ? clientX > window.innerWidth - 84 && clientY > 0
             : clientX < 84 && clientY > 0;
           if (isInvalidPosition) return;
-          dispatch({ type: "left_sidebar" });
+          dispatch({ type: "leave_sidebar" });
         }}
       >
         {state.display !== Display.Full && (
@@ -110,7 +109,7 @@ export const PureSidebar = () => {
               name="display"
               variant="ghost"
               size="icon"
-              onClick={() => dispatch({ type: "opened_full_mode" })}
+              onClick={() => dispatch({ type: "open_full_mode" })}
             >
               <PanelsTopLeft />
             </Button>
@@ -124,26 +123,23 @@ export const PureSidebar = () => {
             "fixed bg-transparent top-[84px] w-2.5 h-full",
             isRTL ? "right-0" : "left-0"
           )}
-          onMouseEnter={() => dispatch({ type: "entered_button_or_edge_area" })}
+          onMouseEnter={() => dispatch({ type: "enter_button_or_edge_area" })}
         />
       )}
       <nav
         className={cn(
-          "border border-gray-300 border-r-2 bg-white w-[288px] px-6",
-          state.transitionEnabled
-            ? "transition-all duration-500 ease-in-out"
-            : "opacity-0",
-          state.display === Display.Full && "translate-x-0",
-          state.sidebarStyle === "floating"
-            ? "absolute top-[8%] bottom-[1%] rounded-xl"
-            : "h-screen",
+          "border border-gray-300 border-r-2 bg-white px-6 w-[288px] h-screen",
+          state.transitionEnabled && "transition-all duration-300 ease-in-out",
+          !state.transitionEnabled && "opacity-0",
+          state.sidebarStyle === "floating" && "top-[8%] bottom-[1%] rounded-xl",
           isRTL ? "right-0" : "left-0",
+          (state.display === Display.Hidden || state.sidebarStyle === "floating") && "absolute",
           {
-            "invisible absolute": state.display === Display.Hidden,
             "translate-x-[100%]": state.display === Display.Hidden && isRTL,
             "-translate-x-[100%]": state.display === Display.Hidden && !isRTL,
             "-translate-x-3": state.display === Display.Floating && isRTL,
             "translate-x-3": state.display === Display.Floating && !isRTL,
+            "translate-x-0": state.display === Display.Full,
           }
         )}
         onMouseEnter={({ clientX }) => {
@@ -151,7 +147,7 @@ export const PureSidebar = () => {
             ? clientX >= window.innerWidth - 84
             : clientX <= 84;
           if (shouldReturn) return;
-          dispatch({ type: "entered_sidebar" });
+          dispatch({ type: "enter_sidebar" });
         }}
         onMouseLeave={({ clientX, clientY }) => {
           const shouldReturn = isRTL
@@ -160,7 +156,7 @@ export const PureSidebar = () => {
             : clientX < 15 || (clientX < 84 && clientY <= 85);
 
           if (shouldReturn) return;
-          dispatch({ type: "left_sidebar" });
+          dispatch({ type: "leave_sidebar" });
         }}
       >
         <div className="flex justify-between items-center mt-10">
@@ -183,7 +179,7 @@ export const PureSidebar = () => {
                 className="w-5 h-5"
                 variant="ghost"
                 name="display"
-                onClick={() => dispatch({ type: "closed_sidebar" })}
+                onClick={() => dispatch({ type: "close_sidebar" })}
               >
                 {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </Button>

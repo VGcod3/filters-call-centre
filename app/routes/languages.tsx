@@ -9,12 +9,14 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Languages() {
+
+
   return (
-    <div className="flex" >
-        <PureSidebar />
-        <div>
-          <p>ldjksdfdslkf</p>
-        </div>
+    <div className="flex bg-gray-400 h-screen w-full">
+    <PureSidebar />
+      <div className="pl-12 pt-5">
+          <p className="text-3xl">Контент</p>
+      </div>
     </div>
-  );
+);
 }
