@@ -15,7 +15,6 @@ enum Display {
 
 interface SidebarState {
   display: Display;
-  isHovered: boolean;
   transitionEnabled: boolean;
   sidebarStyle: "full" | "floating";
 }
@@ -24,7 +23,6 @@ type SidebarAction =
   | { type: "enter_button_or_edge_area" }
   | { type: "leave_sidebar" }
   | { type: "open_full_mode" }
-  | { type: "enter_sidebar" }
   | { type: "change_language" }
   | { type: "close_sidebar" };
 
@@ -41,20 +39,16 @@ export const sidebarReducer = (
         sidebarStyle: "floating",
       };
     case "leave_sidebar":
-      if (state.display === Display.Full) return { ...state, isHovered: false };
+      if (state.display === Display.Full) return state;
       return { ...state, display: Display.Hidden };
-    case "enter_sidebar":
-      if (state.display === Display.Full) return { ...state, isHovered: true };
-      return state;
     case "open_full_mode":
       return {
         ...state,
         display: Display.Full,
-        isHovered: true,
         sidebarStyle: "full",
       };
     case "close_sidebar":
-      return { ...state, display: Display.Hidden, isHovered: false };
+      return { ...state, display: Display.Hidden };
     case "change_language":
       if (state.display === Display.Full) return state;
       return { ...state, transitionEnabled: false };
@@ -69,7 +63,6 @@ export const PureSidebar = () => {
 
   const [state, dispatch] = useReducer(sidebarReducer, {
     display: Display.Full,
-    isHovered: false,
     transitionEnabled: true,
     sidebarStyle: "full",
   });
@@ -142,13 +135,6 @@ export const PureSidebar = () => {
             "translate-x-0": state.display === Display.Full,
           }
         )}
-        onMouseEnter={({ clientX }) => {
-          const shouldReturn = isRTL
-            ? clientX >= window.innerWidth - 84
-            : clientX <= 84;
-          if (shouldReturn) return;
-          dispatch({ type: "enter_sidebar" });
-        }}
         onMouseLeave={({ clientX, clientY }) => {
           const shouldReturn = isRTL
             ? clientX > window.innerWidth - 15 ||
@@ -173,7 +159,7 @@ export const PureSidebar = () => {
               <h1 className="text-gray-900 opacity-80 text-sm">Admin</h1>
             </div>
           </div>
-          {state.display === Display.Full && state.isHovered && (
+          {state.display === Display.Full && (
               <Button
                 size="icon"
                 className="w-5 h-5"
