@@ -23,7 +23,7 @@ type SidebarAction =
   | { type: "change_language" }
   | { type: "close_sidebar" };
 
-const displayEnum = z.enum(["full", "hidden", "floating"]);
+export const displayEnum = z.enum(["full", "hidden", "floating"]);
 export const cookieDisplayEnum = displayEnum.exclude(["floating"]);
 
 type Display = z.infer<typeof displayEnum>;
