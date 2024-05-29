@@ -5,6 +5,7 @@ import { useDirection } from "~/utils/useDirection";
 import { Link, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useEffect, useReducer } from "react";
+import { Clock } from "./Sidebar/Clock";
 import { cn } from "~/lib/utils";
 
 enum Display {
@@ -177,6 +178,10 @@ export const PureSidebar = () => {
               Switch
             </Link>
           </Button>
+          <div className="flex-1" />
+          <div className="mb-4">
+            <Clock />
+          </div>
         </div>
       </nav>
     </div>
