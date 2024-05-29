@@ -20,8 +20,9 @@ export default function Languages() {
   return (
     <div className=" bg-gray-400 h-screen w-full">
     <PureSidebar />
-      <div className={cn("transition-all duration-300", display === displayEnum.enum.full ? "w-[calc(100%-288px)]" : "w-full", isRTL ? "float-left" : "float-right")} >
-          <p className={cn("text-3xl")}>Контент</p>
+
+      <div className="pl-12 pt-5">
+          <p className="text-3xl">Content</p>
       </div>
     </div>
 );
