@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { PanelsTopLeft, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useTranslation } from "react-i18next";
 import {useDirection} from "~/utils/useDirection";
-import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
+import { Clock } from "./Sidebar/Clock";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -15,7 +14,6 @@ interface SidebarProps {
 
 export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }: SidebarProps) => {
   const [isFull, setIsFull] = useState(false);
-  const { i18n } = useTranslation();
   const isRTL = useDirection();
 
   const handleMouseEnter = () => {
@@ -52,7 +50,7 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
 
       <nav
         className={cn(
-          "w-[288px] border border-gray-300 border-r-2",
+          "w-[288px]",
           isOpen
             ? isFull
               ? "translate-x-0"
@@ -67,12 +65,12 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
           isFull ? "bottom-0" : "bottom-[1%]",
           isTransition && "transition-all duration-500 ease-in-out",
           !isFull && "rounded-xl",
-          isRTL ? 'right-0' : 'left-0'
+          isRTL ? 'right-0 border-l-2 border-gray-300' : 'left-0 border-r-2 border-gray-300'
         )}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="relative w-full">
+        <div className="relative w-full h-full flex flex-col">
           <div className="flex justify-between" >
             {isFull && (
             <Button
@@ -88,15 +86,8 @@ export const PureSidebar = ({ isOpen, setIsOpen, isTransition, setIsTransition }
             </Button>
           )}
           </div>
-          <div className="flex items-center justify-center w-full">
-            <Button asChild className="bg-red-500" onClick={() => {
-              setIsTransition(false);
-              !isFull && setIsOpen(false);
-            }}>
-                <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
-                    Switch
-                </Link>
-            </Button>
+          <div className="flex flex-grow justify-center items-end pl-6 pr-6 pb-1">
+            <Clock  />
           </div>
         </div>
       </nav>
