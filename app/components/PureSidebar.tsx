@@ -23,7 +23,7 @@ type SidebarAction =
   | { type: "change_language" }
   | { type: "close_sidebar" };
 
-const displayEnum = z.enum(["full", "hidden", "floating"]);
+export const displayEnum = z.enum(["full", "hidden", "floating"]);
 export const cookieDisplayEnum = displayEnum.exclude(["floating"]);
 
 type Display = z.infer<typeof displayEnum>;
@@ -88,7 +88,7 @@ export const PureSidebar = () => {
 
   const fetcher = useFetcher();
   return (
-    <div>
+    <div className={cn(isRTL ? "float-right" : "float-left")} >
       <div
         className={cn(
           "absolute top-1 pl-5 pr-7 pt-2 pb-10",
@@ -135,12 +135,11 @@ export const PureSidebar = () => {
       )}
       <nav
         className={cn(
-          "border border-gray-300 border-r-2 bg-white px-6 w-[288px] h-screen",
+          "border border-gray-300 border-r-2 bg-white px-6 w-[288px] h-screen absolute",
           state.transitionEnabled && "transition-all duration-300 ease-in-out",
           !state.transitionEnabled && "opacity-0",
           state.sidebarStyle === "floating" && "top-[8%] bottom-[1%] rounded-xl",
           isRTL ? "right-0" : "left-0",
-          (state.display === displayEnum.enum.hidden || state.sidebarStyle === "floating") && "absolute",
           {
             "translate-x-[100%]": state.display === displayEnum.enum.hidden && isRTL,
             "-translate-x-[100%]": state.display === displayEnum.enum.hidden && !isRTL,
