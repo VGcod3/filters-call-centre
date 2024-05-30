@@ -1,5 +1,9 @@
-import type { MetaFunction } from "@remix-run/node";
-import { PureSidebar } from "~/components/PureSidebar";
+import type { MetaFunction, SerializeFrom } from "@remix-run/node";
+import { useRouteLoaderData } from "@remix-run/react";
+import { PureSidebar, displayEnum } from "~/components/PureSidebar";
+import { cn } from "~/lib/utils";
+import { type loader as rootLoader } from "~/root";
+import { useDirection } from "~/utils/useDirection";
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,10 +13,13 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Languages() {
+  const isRTL = useDirection();
+  const requestInfo = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
+  const display = requestInfo.display;
   return (
-    <div className="flex bg-gray-400 h-screen w-full">
+    <div className="bg-gray-400 h-screen w-full">
     <PureSidebar />
-      <div className="pl-12 pt-5">
+      <div className={cn("transition-all duration-300", display === displayEnum.enum.full ? "w-[calc(100%-288px)]" : "w-full", isRTL ? "float-left" : "float-right")}>
           <p className="text-3xl">Content</p>
       </div>
     </div>
