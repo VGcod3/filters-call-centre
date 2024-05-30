@@ -1,5 +1,10 @@
 {
-	"text": "Random text",
-	"description": "Random description",
-	"header": "Content of pure sidebar"
+	"sidebar": {
+		"language": {
+			"title": "Language",
+			"en": "EN",
+			"he": "HE"
+		},
+		"logout": "Logout"
+	}
 }

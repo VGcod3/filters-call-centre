@@ -1,5 +1,10 @@
 {
-	"text": "טקסט אקראי",
-	"description": "תיאור אקראי",
-	"header": "תוכן של סרגל צד טהור"
+	"sidebar": {
+		"language": {
+			"title": "שפה",
+			"en": "EN",
+			"he": "עב"
+		},
+		"logout": "להתנתק"
+	}
 }
