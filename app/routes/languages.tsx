@@ -9,13 +9,11 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Languages() {
-
-
   return (
     <div className="flex bg-gray-400 h-screen w-full">
     <PureSidebar />
       <div className="pl-12 pt-5">
-          <p className="text-3xl">Контент</p>
+          <p className="text-3xl">Content</p>
       </div>
     </div>
 );
