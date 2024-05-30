@@ -67,7 +67,7 @@ export const PureSidebar = () => {
   const display = requestInfo.display;
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: display,
+    display,
     transitionEnabled: true,
     sidebarStyle: "full",
   });

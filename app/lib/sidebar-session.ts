@@ -1,18 +1,16 @@
 import * as cookie from "cookie";
 import { CookieDisplay, cookieDisplayEnum } from "~/components/PureSidebar";
 
-const cookieName = "display";
+const COOKIE_NAME = "display";
 
 export function getSidebarDisplay(request: Request) {
   const cookieHeader = request.headers.get("Cookie");
-
-  return cookieDisplayEnum.parse(cookie.parse(cookieHeader || "")[cookieName]);
+  const cookieValue = cookieHeader ? cookie.parse(cookieHeader)[COOKIE_NAME] : undefined;
+  return cookieDisplayEnum
+    .default(cookieDisplayEnum.enum.hidden)
+    .parse(cookieValue);
 }
 
 export function setSidebarDisplay(display: CookieDisplay) {
-  if (display) {
-    return cookie.serialize(cookieName, display, { path: "/" });
-  } else {
-    return cookie.serialize(cookieName, "", { path: "/", maxAge: 0 });
-  }
+    return cookie.serialize(COOKIE_NAME, display, { path: "/" });
 }
