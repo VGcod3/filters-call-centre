@@ -16,7 +16,6 @@ export default function Languages() {
   const requestInfo = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
   const display = requestInfo.display;
   const isRTL = useDirection();
-
   return (
     <div className=" bg-gray-400 h-screen w-full">
     <PureSidebar />

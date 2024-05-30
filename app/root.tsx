@@ -1,17 +1,30 @@
 import { useChangeLanguage } from "remix-i18next/react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLoaderData } from "@remix-run/react";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { getSidebarDisplay } from "./lib/sidebar-session";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { getSidebarDisplay, setSidebarDisplay } from "./lib/sidebar-session";
 import "./globals.css";
 import { i18nCookie, i18next } from "./i18next.server";
 import { useTranslation } from "react-i18next";
 import { Lang } from "./utils/lang";
+import { cookieDisplayEnum } from "./components/PureSidebar";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = await i18next.getLocale(request);
+  let display;
+
+  try {
+    display = await getSidebarDisplay(request); 
+  } catch (error) {
+    throw redirect("/", {
+      status: 303,
+      headers: {
+        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.hidden),
+      }
+    });
+  }
 
   return json({
-    display: getSidebarDisplay(request),
+    display,
     locale,
     headers: {
       "Set-Cookie": await i18nCookie.serialize(locale),
