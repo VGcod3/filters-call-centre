@@ -8,18 +8,19 @@ import { useTranslation } from "react-i18next";
 import { Lang } from "./utils/lang";
 import { cookieDisplayEnum } from "./components/PureSidebar";
 
-export async function loader({ request }: LoaderFunctionArgs) { 
+export async function loader({ request }: LoaderFunctionArgs) {
   const locale = await i18next.getLocale(request);
   let display;
-  try{
-    display = getSidebarDisplay(request);
-  } catch(error){
+
+  try {
+    display = await getSidebarDisplay(request); 
+  } catch (error) {
     throw redirect("/", {
       status: 303,
       headers: {
-        "Set-Cookie": setSidebarDisplay(cookieDisplayEnum.enum.hidden),  
+        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.hidden),
       }
-    })
+    });
   }
 
   return json({

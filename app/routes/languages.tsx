@@ -9,8 +9,6 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Languages() {
-
-
   return (
     <div className="flex bg-gray-400 h-screen w-full">
     <PureSidebar />

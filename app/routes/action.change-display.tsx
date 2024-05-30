@@ -11,7 +11,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     { success: true },
     {
       headers: {
-        "Set-Cookie": setSidebarDisplay(parsedDisplay),
+        "Set-Cookie": await setSidebarDisplay(parsedDisplay),
       },
     }
   );
