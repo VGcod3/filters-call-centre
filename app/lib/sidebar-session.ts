@@ -1,4 +1,4 @@
-import { createCookie } from "@remix-run/node";
+import { createCookie, redirect } from "@remix-run/node";
 import { CookieDisplay, cookieDisplayEnum } from "~/components/PureSidebar";
 
 const COOKIE_NAME = "display";
@@ -9,12 +9,25 @@ const sidebarDisplayCookie = createCookie(COOKIE_NAME, {
 
 export async function getSidebarDisplay(request: Request) {
   const cookieHeader = request.headers.get("Cookie");
-  const cookieValue = cookieHeader ? await sidebarDisplayCookie.parse(cookieHeader) : undefined;
-  return cookieDisplayEnum
-    .default(cookieDisplayEnum.enum.full)
-    .parse(cookieValue);
+
+  const cookieValue =
+    (await sidebarDisplayCookie.parse(cookieHeader)) ??
+    cookieDisplayEnum.enum.full;
+
+  const parsedCookie = cookieDisplayEnum.safeParse(cookieValue);
+
+  if (!parsedCookie.success) {
+    throw redirect("/", {
+      status: 303,
+      headers: {
+        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.full),
+      },
+    });
+  }
+
+  return parsedCookie.data;
 }
 
 export async function setSidebarDisplay(display: CookieDisplay) {
-  return await sidebarDisplayCookie.serialize(display);
+  return sidebarDisplayCookie.serialize(display);
 }
