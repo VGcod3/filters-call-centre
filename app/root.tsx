@@ -6,11 +6,14 @@ import "./globals.css";
 import { i18nCookie, i18next } from "./i18next.server";
 import { useTranslation } from "react-i18next";
 import { Lang } from "./utils/lang";
-import { cookieDisplayEnum } from "./components/PureSidebar";
+import { cookieDisplayEnum } from "./routes/languages";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const locale = await i18next.getLocale(request);
   let display;
+
+  const fakePromise = new Promise((resolve) => setTimeout(resolve, 1000));
+  await fakePromise;
 
   try {
     display = await getSidebarDisplay(request); 
