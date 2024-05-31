@@ -1,5 +1,18 @@
 {
-	"text": "Random text",
-	"description": "Random description",
-	"header": "Content of pure sidebar"
+	"sidebar": {
+		"navigation": {
+			"dashboards": "Dashboards",
+			"users": "Users",
+			"settings": "Settings",
+			"reports": {
+				"title": "Reports",
+				"subLinks": {
+					"agentPerformanceReport": "Agent Performance Report",
+					"queuePerformanceReport": "Queue Performance Report",
+					"agentCallReport": "Agent Call Report",
+					"abandonedCallsReport": "Abandoned Calls Report"
+				}
+			}
+		}
+	}
 }
