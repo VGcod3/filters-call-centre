@@ -2,11 +2,14 @@ import { ChevronLeft, ChevronRight, LogOut, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
-import { useNavigation } from "@remix-run/react";
+import { Link, useFetcher, useNavigation, useRouteLoaderData } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { useEffect, useReducer } from "react";
 import { Clock } from "./Sidebar/Clock";
 import { cn } from "~/lib/utils";
+import { z } from "zod";
+import { SerializeFrom } from "@remix-run/node";
+import { type loader as rootLoader } from "~/root";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 enum Display {
@@ -28,6 +31,12 @@ type SidebarAction =
   | { type: "change_language" }
   | { type: "close_sidebar" };
 
+export const displayEnum = z.enum(["full", "hidden", "floating"]);
+export const cookieDisplayEnum = displayEnum.exclude(["floating"]);
+
+type Display = z.infer<typeof displayEnum>;
+export type CookieDisplay = z.infer<typeof cookieDisplayEnum>;
+
 export const sidebarReducer = (
   state: SidebarState,
   action: SidebarAction
@@ -36,23 +45,23 @@ export const sidebarReducer = (
     case "enter_button_or_edge_area":
       return {
         ...state,
-        display: Display.Floating,
+        display: displayEnum.enum.floating,
         transitionEnabled: true,
         sidebarStyle: "floating",
       };
     case "leave_sidebar":
-      if (state.display === Display.Full) return state;
-      return { ...state, display: Display.Hidden };
+      if (state.display === displayEnum.enum.full) return state;
+      return { ...state, display: displayEnum.enum.hidden };
     case "open_full_mode":
       return {
         ...state,
-        display: Display.Full,
+        display: displayEnum.enum.full,
         sidebarStyle: "full",
       };
     case "close_sidebar":
-      return { ...state, display: Display.Hidden };
+      return { ...state, display: displayEnum.enum.hidden };
     case "change_language":
-      if (state.display === Display.Full) return state;
+      if (state.display === displayEnum.enum.full) return state;
       return { ...state, transitionEnabled: false };
     default:
       throw new Error("Invalid action type");
@@ -62,9 +71,11 @@ export const sidebarReducer = (
 export const PureSidebar = () => {
   const isRTL = useDirection();
   const { t } = useTranslation();
+  const requestInfo = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
+  const display = requestInfo.display;
 
   const [state, dispatch] = useReducer(sidebarReducer, {
-    display: Display.Full,
+    display,
     transitionEnabled: true,
     sidebarStyle: "full",
   });
@@ -83,6 +94,7 @@ export const PureSidebar = () => {
     dispatch({ type: "change_language" });
   }, [isChangingLanguage]);
 
+  const fetcher = useFetcher();
   return (
     <div>
       <div
@@ -99,20 +111,28 @@ export const PureSidebar = () => {
           dispatch({ type: "leave_sidebar" });
         }}
       >
-        {state.display !== Display.Full && (
+       {state.display !== displayEnum.enum.full && (
+          <fetcher.Form
+            method="post"
+            action="/action/change-display"
+            onSubmit={() => {
+              dispatch({ type: "open_full_mode" });
+            }}
+          >
             <Button
               name="display"
+              value={cookieDisplayEnum.enum.full}
               variant="ghost"
               size="icon"
-              onClick={() => dispatch({ type: "open_full_mode" })}
             >
               <PanelsTopLeft />
             </Button>
+          </fetcher.Form>
         )}
       </div>
 
-      {state.display === Display.Floating ||
-      state.display === Display.Full ? null : (
+      {state.display === displayEnum.enum.floating ||
+      state.display === displayEnum.enum.full ? null : (
         <div
           className={cn(
             "fixed bg-transparent top-[84px] w-2.5 h-full",
@@ -128,13 +148,13 @@ export const PureSidebar = () => {
           !state.transitionEnabled && "opacity-0",
           state.sidebarStyle === "floating" && "top-[8%] bottom-[1%] rounded-xl",
           isRTL ? "right-0" : "left-0",
-          (state.display === Display.Hidden || state.sidebarStyle === "floating") && "absolute",
+          (state.display === displayEnum.enum.hidden || state.sidebarStyle === "floating") && "absolute",
           {
-            "translate-x-[100%]": state.display === Display.Hidden && isRTL,
-            "-translate-x-[100%]": state.display === Display.Hidden && !isRTL,
-            "-translate-x-3": state.display === Display.Floating && isRTL,
-            "translate-x-3": state.display === Display.Floating && !isRTL,
-            "translate-x-0": state.display === Display.Full,
+            "translate-x-[100%]": state.display === displayEnum.enum.hidden && isRTL,
+            "-translate-x-[100%]": state.display === displayEnum.enum.hidden && !isRTL,
+            "-translate-x-3": state.display === displayEnum.enum.floating && isRTL,
+            "translate-x-3": state.display === displayEnum.enum.floating && !isRTL,
+            "translate-x-0": state.display === displayEnum.enum.full,
           }
         )}
         onMouseLeave={({ clientX, clientY }) => {
@@ -162,16 +182,25 @@ export const PureSidebar = () => {
                 <h1 className="text-gray-900 opacity-80 text-sm">Admin</h1>
               </div>
           </div>
-          {state.display === Display.Full && (
+          {state.display === displayEnum.enum.full && (
+              <fetcher.Form
+              method="post"
+              action="/action/change-display"
+              onSubmit={() => {
+                dispatch({ type: "close_sidebar" });
+              }}
+            >
               <Button
                 size="icon"
                 className="w-5 h-5"
                 variant="ghost"
                 name="display"
-                onClick={() => dispatch({ type: "close_sidebar" })}
+                value={cookieDisplayEnum.enum.hidden}
               >
                 {isRTL ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
               </Button>
+            </fetcher.Form>
+
           )}
           </div>
           <div className="flex flex-grow justify-center items-end mb-8">
