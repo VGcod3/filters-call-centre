@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
@@ -10,6 +10,13 @@ import { cn } from "~/lib/utils";
 import { z } from "zod";
 import { SerializeFrom } from "@remix-run/node";
 import { type loader as rootLoader } from "~/root";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+
+enum Display {
+  Full = "full",
+  Floating = "floating",
+  Hidden = "hidden",
+}
 
 interface SidebarState {
   display: Display;
@@ -62,8 +69,8 @@ export const sidebarReducer = (
 };
 
 export const PureSidebar = () => {
-  const { i18n } = useTranslation();
   const isRTL = useDirection();
+  const { t } = useTranslation();
   const requestInfo = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
   const display = requestInfo.display;
 
@@ -160,19 +167,20 @@ export const PureSidebar = () => {
           dispatch({ type: "leave_sidebar" });
         }}
       >
-        <div className="flex justify-between items-center mt-10">
-          <div className="flex gap-4">
-            <Avatar className="w-12 h-12">
-              <AvatarFallback className="bg-gray-800 text-white font-semibold">
-                SW
-              </AvatarFallback>
-            </Avatar>
-            <div className="whitespace-nowrap overflow-hidden">
-              <h2 className="text-gray-900 text-[16px] font-semibold overflow-hidden overflow-ellipsis">
-                Sarah Wilson
-              </h2>
-              <h1 className="text-gray-900 opacity-80 text-sm">Admin</h1>
-            </div>
+       <div className="relative w-full h-full flex flex-col">
+          <div className="flex justify-between mt-4 items-center" >
+            <div className="flex gap-4 flex-1">
+              <Avatar className="w-12 h-12">
+                <AvatarFallback className="bg-gray-800 text-white font-semibold">
+                 SW
+                </AvatarFallback>
+              </Avatar>
+              <div className="whitespace-nowrap overflow-hidden">
+                <h2 className="text-gray-900 text-[16px] font-semibold overflow-hidden overflow-ellipsis">
+                  Sarah Wilson
+                </h2>
+                <h1 className="text-gray-900 opacity-80 text-sm">Admin</h1>
+              </div>
           </div>
           {state.display === displayEnum.enum.full && (
               <fetcher.Form
@@ -194,17 +202,22 @@ export const PureSidebar = () => {
             </fetcher.Form>
 
           )}
-        </div>
-        <div className="flex items-center justify-center">
-          <Button asChild className="bg-red-500">
-            <Link to={`?lng=${i18n.language === "en" ? "he" : "en"}`}>
-              Switch
-            </Link>
-          </Button>
-          <div className="flex-1" />
-          <div className="mb-4">
-            <Clock />
           </div>
+          <div className="flex flex-grow justify-center items-end mb-8">
+              <Clock  />
+           </div>
+           <div className="flex items-center justify-between pb-3 border-b border-gray-300">
+            <p className="text-gray-500 font-medium">
+              {t("sidebar.language.title")}
+            </p>
+            <LanguageSwitcher />
+          </div>
+          <div className="mt-2">
+            <Button variant="ghost" className="gap-2">
+              <LogOut className={cn(!isRTL && "rotate-180")} size={18} />
+              {t("sidebar.logout")}
+            </Button>
+          </div>  
         </div>
       </nav>
     </div>
