@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
 import { Link, useFetcher, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
 import { Clock } from "./Sidebar/Clock";
 import { cn } from "~/lib/utils";
 import { SidebarAction, SidebarState, cookieDisplayEnum, displayEnum } from "~/routes/languages";
