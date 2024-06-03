@@ -1,5 +1,4 @@
 import { createCookie, redirect } from "@remix-run/node";
-// import { CookieDisplay, cookieDisplayEnum } from "~/components/PureSidebar";
 import { CookieDisplay, cookieDisplayEnum } from "~/routes/languages";
 
 const COOKIE_NAME = "display";
@@ -21,7 +20,7 @@ export async function getSidebarDisplay(request: Request) {
     throw redirect("/", {
       status: 303,
       headers: {
-        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.full),
+        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.hidden),
       },
     });
   }
