@@ -9,14 +9,22 @@ import { Lang } from "./utils/lang";
 import { cookieDisplayEnum } from "./routes/languages";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const locale = await i18next.getLocale(request);
-  let display;
-
   const fakePromise = new Promise((resolve) => setTimeout(resolve, 1000));
-  await fakePromise;
 
   try {
-    display = await getSidebarDisplay(request); 
+    const [display, locale] = await Promise.all([
+      getSidebarDisplay(request),
+      i18next.getLocale(request),
+      fakePromise,
+    ]);
+
+    return json({
+      display,
+      locale,
+      headers: {
+        "Set-Cookie": await i18nCookie.serialize(locale),
+      },
+    });
   } catch (error) {
     throw redirect("/", {
       status: 303,
@@ -25,14 +33,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
       }
     });
   }
-
-  return json({
-    display,
-    locale,
-    headers: {
-      "Set-Cookie": await i18nCookie.serialize(locale),
-    },
-  });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
