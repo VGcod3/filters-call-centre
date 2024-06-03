@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
 import { Link, useFetcher, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { useEffect } from "react";
+import { useEffect, useReducer } from "react";
+import { Clock } from "./Sidebar/Clock";
 import { cn } from "~/lib/utils";
 import { SidebarAction, SidebarState, cookieDisplayEnum, displayEnum } from "~/routes/languages";
 
@@ -148,6 +149,10 @@ export const PureSidebar = ({state, dispatch}: PureSidebarProps) => {
               Switch
             </Link>
           </Button>
+          <div className="flex-1" />
+          <div className="mb-4">
+            <Clock />
+          </div>
         </div>
       </nav>
     </div>
