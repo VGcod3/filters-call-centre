@@ -1,6 +1,6 @@
 import { json, type ActionFunctionArgs } from "@remix-run/node";
-import { cookieDisplayEnum } from "~/components/PureSidebar";
 import { setSidebarDisplay } from "~/lib/sidebar-session";
+import { cookieDisplayEnum } from "./languages";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();

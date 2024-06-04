@@ -2,76 +2,21 @@ import { ChevronLeft, ChevronRight, PanelsTopLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { useDirection } from "~/utils/useDirection";
-import { Link, useFetcher, useNavigation, useRouteLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useNavigation } from "@remix-run/react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
 import { Clock } from "./Sidebar/Clock";
 import { cn } from "~/lib/utils";
-import { z } from "zod";
-import { SerializeFrom } from "@remix-run/node";
-import { type loader as rootLoader } from "~/root";
+import { SidebarAction, SidebarState, cookieDisplayEnum, displayEnum } from "~/routes/languages";
 
-interface SidebarState {
-  display: Display;
-  transitionEnabled: boolean;
-  sidebarStyle: "full" | "floating";
+interface PureSidebarProps {
+  state: SidebarState;
+  dispatch: (action: SidebarAction) => void;
 }
 
-type SidebarAction =
-  | { type: "enter_button_or_edge_area" }
-  | { type: "leave_sidebar" }
-  | { type: "open_full_mode" }
-  | { type: "change_language" }
-  | { type: "close_sidebar" };
-
-export const displayEnum = z.enum(["full", "hidden", "floating"]);
-export const cookieDisplayEnum = displayEnum.exclude(["floating"]);
-
-type Display = z.infer<typeof displayEnum>;
-export type CookieDisplay = z.infer<typeof cookieDisplayEnum>;
-
-export const sidebarReducer = (
-  state: SidebarState,
-  action: SidebarAction
-): SidebarState => {
-  switch (action.type) {
-    case "enter_button_or_edge_area":
-      return {
-        ...state,
-        display: displayEnum.enum.floating,
-        transitionEnabled: true,
-        sidebarStyle: "floating",
-      };
-    case "leave_sidebar":
-      if (state.display === displayEnum.enum.full) return state;
-      return { ...state, display: displayEnum.enum.hidden };
-    case "open_full_mode":
-      return {
-        ...state,
-        display: displayEnum.enum.full,
-        sidebarStyle: "full",
-      };
-    case "close_sidebar":
-      return { ...state, display: displayEnum.enum.hidden };
-    case "change_language":
-      if (state.display === displayEnum.enum.full) return state;
-      return { ...state, transitionEnabled: false };
-    default:
-      throw new Error("Invalid action type");
-  }
-};
-
-export const PureSidebar = () => {
+export const PureSidebar = ({state, dispatch}: PureSidebarProps) => {
   const { i18n } = useTranslation();
   const isRTL = useDirection();
-  const requestInfo = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
-  const display = requestInfo.display;
-
-  const [state, dispatch] = useReducer(sidebarReducer, {
-    display,
-    transitionEnabled: true,
-    sidebarStyle: "full",
-  });
 
   const navigation = useNavigation();
   const navSearchParams = new URLSearchParams(navigation.location?.search);
@@ -89,7 +34,10 @@ export const PureSidebar = () => {
 
   const fetcher = useFetcher();
   return (
-    <div>
+    <div className={cn(isRTL ? "float-right" : "float-left")}  >
+      <div className={cn("fixed inset-0 bg-black bg-opacity-70 transition-opacity",
+           state.display === displayEnum.enum.floating ? "opacity-50" : "opacity-0 pointer-events-none")}
+      />
       <div
         className={cn(
           "absolute top-1 pl-5 pr-7 pt-2 pb-10",
@@ -136,18 +84,18 @@ export const PureSidebar = () => {
       )}
       <nav
         className={cn(
-          "border border-gray-300 border-r-2 bg-white px-6 w-[288px] h-screen",
+          "border border-gray-300 border-r-2 bg-white px-6 w-[288px] absolute",
           state.transitionEnabled && "transition-all duration-300 ease-in-out",
           !state.transitionEnabled && "opacity-0",
           state.sidebarStyle === "floating" && "top-[8%] bottom-[1%] rounded-xl",
+          (state.sidebarStyle === "full") && "h-screen",
           isRTL ? "right-0" : "left-0",
-          (state.display === displayEnum.enum.hidden || state.sidebarStyle === "floating") && "absolute",
           {
             "translate-x-[100%]": state.display === displayEnum.enum.hidden && isRTL,
             "-translate-x-[100%]": state.display === displayEnum.enum.hidden && !isRTL,
-            "-translate-x-3": state.display === displayEnum.enum.floating && isRTL,
+            "-translate-x-3" : state.display === displayEnum.enum.floating && isRTL,
             "translate-x-3": state.display === displayEnum.enum.floating && !isRTL,
-            "translate-x-0": state.display === displayEnum.enum.full,
+            "translate-x-0 top-0 h-screen": state.display === displayEnum.enum.full,
           }
         )}
         onMouseLeave={({ clientX, clientY }) => {

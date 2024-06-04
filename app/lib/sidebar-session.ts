@@ -1,5 +1,5 @@
 import { createCookie, redirect } from "@remix-run/node";
-import { CookieDisplay, cookieDisplayEnum } from "~/components/PureSidebar";
+import { CookieDisplay, cookieDisplayEnum } from "~/routes/languages";
 
 const COOKIE_NAME = "display";
 
