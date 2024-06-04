@@ -43,7 +43,7 @@ export const PureSidebar = ({state, dispatch}: PureSidebarProps) => {
           "absolute top-1 pl-5 pr-7 pt-2 pb-10",
           isRTL ? "right-0" : "left-0"
         )}
-        onMouseEnter={() => state.display === displayEnum.enum.hidden && dispatch({ type: "enter_button_or_edge_area" })}
+        onMouseEnter={() => dispatch({ type: "enter_button_or_edge_area" })}
         onMouseLeave={({ clientX, clientY }) => {
           const isInvalidPosition = isRTL
             ? clientX > window.innerWidth - 84 && clientY > 0

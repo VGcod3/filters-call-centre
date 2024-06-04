@@ -20,7 +20,7 @@ export async function getSidebarDisplay(request: Request) {
     throw redirect("/", {
       status: 303,
       headers: {
-        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.hidden),
+        "Set-Cookie": await setSidebarDisplay(cookieDisplayEnum.enum.full),
       },
     });
   }

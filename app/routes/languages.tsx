@@ -39,12 +39,15 @@ export const sidebarReducer = (
 ): SidebarState => {
   switch (action.type) {
     case "enter_button_or_edge_area":
-      return {
-        ...state,
-        display: displayEnum.enum.floating,
-        transitionEnabled: true,
-        sidebarStyle: "floating",
-      };
+      if (state.display === displayEnum.enum.hidden) {
+        return {
+          ...state,
+          display: displayEnum.enum.floating,
+          transitionEnabled: true,
+          sidebarStyle: "floating",
+        };
+      }
+      return state;
     case "leave_sidebar":
       if (state.display === displayEnum.enum.full) return state;
       return { ...state, display: displayEnum.enum.hidden };
