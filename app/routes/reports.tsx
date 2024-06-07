@@ -77,7 +77,7 @@ export function loader({ request }: LoaderFunctionArgs) {
 
 export default function Reports() {
   return (
-    <div className="bg-gray-200 flex h-screen w-full flex-col gap-3 justify-start items-start p-5">
+    <div className="bg-gray-200 flex h-full w-full flex-col gap-3 justify-start items-start p-5">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
