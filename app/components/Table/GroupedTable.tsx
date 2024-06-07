@@ -42,6 +42,7 @@ export function GroupedTable() {
     getSubRows: (row) => row.dailyData,
   });
 
+
   return (
     <div className="rounded-md border">
       <Table>
