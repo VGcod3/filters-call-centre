@@ -1,6 +1,8 @@
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { z } from "zod";
 import { Button } from "../ui/button";
+import { ChevronDown } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 const dailyDataSchema = z.object({
   queue: z.string(),
@@ -62,18 +64,10 @@ const columnHelper = createColumnHelper<QueuePerformanceReport>();
 
 export const groupedColums = [
   columnHelper.accessor("queue", {
-    header: ({ table }) => {
+    header: () => {
       return (
-        <div className="flex gap-1 items-center ">
-          <Button
-            variant={table.getIsAllRowsExpanded() ? "outline" : "ghost"}
-            className="flex items-center justify-center w-full h-full"
-            onClick={() => {
-              table.toggleAllRowsExpanded();
-            }}
-          >
-            Queue
-          </Button>
+        <div className="flex justify-between items-center w-full pl-3">
+          Queue
         </div>
       );
     },
@@ -88,16 +82,30 @@ export const groupedColums = [
             paddingLeft: `${row.depth * 2}rem`,
           }}
         >
-          <div>
-            <Button
-              variant={row.getIsExpanded() ? "secondary" : "ghost"}
-              className="flex items-center justify-center w-full h-full"
-              onClick={() => {
-                row.toggleExpanded();
-              }}
-            >
-              {getValue()}
-            </Button>
+          <div
+            className={cn(
+              "flex justify-between items-center w-full",
+              row.originalSubRows && " pl-3"
+            )}
+          >
+            {getValue()}
+            {row.originalSubRows && (
+              <Button
+                size={"icon"}
+                variant={"ghost"}
+                onClick={() => {
+                  row.toggleExpanded();
+                }}
+              >
+                <ChevronDown
+                  className={cn(
+                    "transform transition-transform",
+                    row.getIsExpanded() ? "rotate-180" : ""
+                  )}
+                  size={16}
+                />
+              </Button>
+            )}
           </div>
         </div>
       );
