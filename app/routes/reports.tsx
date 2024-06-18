@@ -20,6 +20,7 @@ import { TeamsFilter } from "~/components/MultiSelect/TeamsFilter";
 
 import { fromDate, toDate } from "~/components/DatePicker/DatePicker";
 import dayjs from "dayjs";
+import { GroupedTable } from "~/components/Table/GroupedTable";
 
 export const meta: MetaFunction = () => {
   return [{ title: "Reports" }, { name: "description", content: "Reports" }];
@@ -76,7 +77,7 @@ export function loader({ request }: LoaderFunctionArgs) {
 
 export default function Reports() {
   return (
-    <div className="bg-gray-200 flex h-screen w-full flex-col gap-3 justify-start items-start p-5">
+    <div className="bg-gray-200 flex h-full w-full flex-col gap-3 justify-start items-start p-5">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -92,15 +93,14 @@ export default function Reports() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
       <h1 className="text-2xl font-bold text-gray-700">Reports</h1>
-
       <div className="flex space-x-1 p-1 border border-gray-300 rounded-md">
         <DatePicker />
         <AgentsFilter />
         <StatusFilter />
         <TeamsFilter />
       </div>
+      <GroupedTable />
     </div>
   );
 }
